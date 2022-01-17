@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/config"
+	"github.com/trustwallet/assets-manager/internal/config"
 	"github.com/trustwallet/go-libs/blockchain/binance/api"
 	"github.com/trustwallet/go-primitives/coin"
 )
@@ -20,13 +20,13 @@ type Client struct {
 }
 
 func NewClient() *Client {
-	keyManager, err := keys.NewMnemonicKeyManager(config.Default.Payment.Phrase)
+	keyManager, err := keys.NewMnemonicKeyManager(config.Default.MergeFeeBot.Payment.Phrase)
 	if err != nil {
 		// return nil, errors.Wrap(err, "failed to create a mnemonic key manager")
 		log.Error(err, "failed to create a mnemonic key manager")
 	}
 
-	c, err := client.NewDexClient(config.Default.ClientsURLs.BinanceDEX, types.ProdNetwork, keyManager)
+	c, err := client.NewDexClient(config.Default.MergeFeeBot.ClientsURLs.BinanceDEX, types.ProdNetwork, keyManager)
 	if err != nil {
 		// return nil, errors.Wrap(err, "failed to create a dex client to binance api")
 		log.Error(err, "failed to create a dex client to binance api")
@@ -34,7 +34,7 @@ func NewClient() *Client {
 
 	return &Client{
 		client:       c,
-		customClient: api.InitClient(config.Default.ClientsURLs.BinanceAPI, nil),
+		customClient: api.InitClient(config.Default.MergeFeeBot.ClientsURLs.BinanceAPI, nil),
 	}
 }
 
@@ -57,7 +57,7 @@ func (c *Client) BurnToken(token string, amount int64) (string, error) {
 		"amount": amount,
 	}).Debugf("tokens has been burned")
 
-	return fmt.Sprintf("%s/tx/%s", config.Default.ClientsURLs.BinanceExplorer, res.Hash), nil
+	return fmt.Sprintf("%s/tx/%s", config.Default.MergeFeeBot.ClientsURLs.BinanceExplorer, res.Hash), nil
 }
 
 func (c *Client) GetTransactionsForAddress(address string) ([]api.Tx, error) {

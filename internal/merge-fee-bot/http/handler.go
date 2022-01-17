@@ -7,7 +7,7 @@ import (
 	ghlib "github.com/google/go-github/v38/github"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/config"
+	"github.com/trustwallet/assets-manager/internal/config"
 	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/events"
 )
 
@@ -24,7 +24,7 @@ var ErrUnknownEvent = errors.New("unknown event")
 func GithubEventsHandler(eh *events.EventHandler) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Validate webhook payload.
-		payloadBytes, err := ghlib.ValidatePayload(r, []byte(config.Default.Github.AppWebhookSecret))
+		payloadBytes, err := ghlib.ValidatePayload(r, []byte(config.Default.MergeFeeBot.Github.AppWebhookSecret))
 		if err != nil {
 			sendHTTPErrorResponse(w, err, http.StatusForbidden)
 

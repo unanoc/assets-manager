@@ -4,7 +4,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/config"
+	"github.com/trustwallet/assets-manager/internal/config"
 )
 
 const namespace = "mergefee"
@@ -19,7 +19,7 @@ type Prometheus struct {
 
 // NewPrometheus return an instance of Prometheus with registered metrics.
 func NewPrometheus() *Prometheus {
-	constLabels := prometheus.Labels{"service": config.Default.App.ServiceName}
+	constLabels := prometheus.Labels{"service": config.Default.MergeFeeBot.ServiceName}
 
 	p := Prometheus{}
 

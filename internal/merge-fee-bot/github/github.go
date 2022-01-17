@@ -8,7 +8,7 @@ import (
 	"github.com/google/go-github/v38/github"
 	"github.com/pkg/errors"
 
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/config"
+	"github.com/trustwallet/assets-manager/internal/config"
 )
 
 type Client struct {
@@ -17,14 +17,14 @@ type Client struct {
 
 // NewClient return an instance of Github for working with Github API.
 func NewClient() (*Client, error) {
-	tr, err := ghi.NewAppsTransport(http.DefaultTransport, config.Default.Github.AppID,
-		[]byte(config.Default.Github.AppPrivateKey))
+	tr, err := ghi.NewAppsTransport(http.DefaultTransport, config.Default.MergeFeeBot.Github.AppID,
+		[]byte(config.Default.MergeFeeBot.Github.AppPrivateKey))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create a transport without installation")
 	}
 
-	client, err := github.NewEnterpriseClient(
-		config.Default.Github.BaseURL, config.Default.Github.BaseURL, &http.Client{Transport: tr})
+	client, err := github.NewEnterpriseClient(config.Default.MergeFeeBot.Github.BaseURL,
+		config.Default.MergeFeeBot.Github.BaseURL, &http.Client{Transport: tr})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create a github client")
 	}
@@ -34,14 +34,14 @@ func NewClient() (*Client, error) {
 		return nil, errors.Wrap(err, "failed to get list of installations")
 	}
 
-	tr2, err := ghi.New(
-		http.DefaultTransport, config.Default.Github.AppID, insts[0].GetID(), []byte(config.Default.Github.AppPrivateKey))
+	tr2, err := ghi.New(http.DefaultTransport, config.Default.MergeFeeBot.Github.AppID,
+		insts[0].GetID(), []byte(config.Default.MergeFeeBot.Github.AppPrivateKey))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create a transport with installation")
 	}
 
-	client, err = github.NewEnterpriseClient(
-		config.Default.Github.BaseURL, config.Default.Github.BaseURL, &http.Client{Transport: tr2})
+	client, err = github.NewEnterpriseClient(config.Default.MergeFeeBot.Github.BaseURL,
+		config.Default.MergeFeeBot.Github.BaseURL, &http.Client{Transport: tr2})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create a github client")
 	}

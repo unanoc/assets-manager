@@ -9,7 +9,12 @@ import (
 
 type (
 	Configuration struct {
-		App         App         `mapstructure:"app"`
+		MergeFeeBot MergeFeeBot `mapstructure:"merge-fee-bot"`
+	}
+
+	MergeFeeBot struct {
+		ServiceName string      `mapstructure:"service_name"`
+		LogLevel    string      `mapstructure:"log_level"`
 		ClientsURLs ClientsURLs `mapstructure:"clients_urls"`
 		HTTP        HTTP        `mapstructure:"http"`
 		Github      Github      `mapstructure:"github"`
@@ -19,11 +24,6 @@ type (
 		User        User        `mapstructure:"user"`
 		Timeout     Timeout     `mapstructure:"timeout"`
 		Limitations Limitations `mapstructure:"limitations"`
-	}
-
-	App struct {
-		ServiceName string `mapstructure:"service_name"`
-		LogLevel    string `mapstructure:"log_level"`
 	}
 
 	ClientsURLs struct {

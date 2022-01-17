@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/config"
+	"github.com/trustwallet/assets-manager/internal/config"
 	"github.com/trustwallet/go-libs/blockchain/binance/api"
 )
 
@@ -40,14 +40,15 @@ func GetPaymentStatus(
 
 	for i := range txs {
 		tx := Tx{
-			Hash:         txs[i].Hash,
-			Amount:       txs[i].Amount / 100000000,
-			Token:        txs[i].Asset,
-			Date:         txs[i].BlockTime,
-			Memo:         txs[i].Memo,
-			DestAddress:  txs[i].ToAddr,
-			FromAddress:  txs[i].FromAddr,
-			ExplorerLink: fmt.Sprintf("%s/tx/%s", config.Default.ClientsURLs.BinanceExplorer, txs[i].Hash),
+			Hash:        txs[i].Hash,
+			Amount:      txs[i].Amount / 100000000,
+			Token:       txs[i].Asset,
+			Date:        txs[i].BlockTime,
+			Memo:        txs[i].Memo,
+			DestAddress: txs[i].ToAddr,
+			FromAddress: txs[i].FromAddr,
+			ExplorerLink: fmt.Sprintf("%s/tx/%s",
+				config.Default.MergeFeeBot.ClientsURLs.BinanceExplorer, txs[i].Hash),
 		}
 
 		valid := ValidateTx(&txs[i], address, memo, token, startTime, endTime)
