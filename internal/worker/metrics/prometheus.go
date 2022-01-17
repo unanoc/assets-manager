@@ -19,7 +19,7 @@ type Prometheus struct {
 
 // NewPrometheus return an instance of Prometheus with registered metrics.
 func NewPrometheus() *Prometheus {
-	constLabels := prometheus.Labels{"service": config.Default.MergeFeeBot.ServiceName}
+	constLabels := prometheus.Labels{"service": config.Default.ServiceName}
 
 	p := Prometheus{}
 

@@ -48,7 +48,7 @@ func GetPaymentStatus(
 			DestAddress: txs[i].ToAddr,
 			FromAddress: txs[i].FromAddr,
 			ExplorerLink: fmt.Sprintf("%s/tx/%s",
-				config.Default.MergeFeeBot.ClientsURLs.BinanceExplorer, txs[i].Hash),
+				config.Default.ClientURLs.BinanceExplorer, txs[i].Hash),
 		}
 
 		valid := ValidateTx(&txs[i], address, memo, token, startTime, endTime)

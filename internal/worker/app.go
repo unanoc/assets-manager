@@ -1,4 +1,4 @@
-package mergefeebot
+package worker
 
 import (
 	"context"
@@ -10,11 +10,11 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/trustwallet/assets-manager/internal/config"
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/blockchain"
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/events"
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/github"
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/http"
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/metrics"
+	"github.com/trustwallet/assets-manager/internal/worker/blockchain"
+	"github.com/trustwallet/assets-manager/internal/worker/events"
+	"github.com/trustwallet/assets-manager/internal/worker/github"
+	"github.com/trustwallet/assets-manager/internal/worker/http"
+	"github.com/trustwallet/assets-manager/internal/worker/metrics"
 	"github.com/trustwallet/go-libs/client/api/backend"
 	"github.com/trustwallet/go-libs/worker"
 )
@@ -33,7 +33,7 @@ func NewApp() *App {
 		log.Fatalf("failed to create github instance: %v", err)
 	}
 
-	backendClient := backend.InitClient(config.Default.MergeFeeBot.ClientsURLs.BackendAPI, nil)
+	backendClient := backend.InitClient(config.Default.ClientURLs.BackendAPI, nil)
 	blockchainClient := blockchain.NewClient()
 	prometheus := metrics.NewPrometheus()
 	eventHandler := events.NewEventHandler(prometheus, githubClient, blockchainClient, &backendClient)
@@ -51,14 +51,14 @@ func (a *App) Run(ctx context.Context) {
 	wg := &sync.WaitGroup{}
 
 	checkFunc := func() {
-		err := a.eventHandler.CheckStatusOfOpenPullRequests(ctx, config.Default.MergeFeeBot.Github.RepoOwner,
-			config.Default.MergeFeeBot.Github.RepoName, nil, false)
+		err := a.eventHandler.CheckStatusOfOpenPullRequests(ctx, config.Default.Github.RepoOwner,
+			config.Default.Github.RepoName, nil, false)
 		if err != nil {
 			log.Error(err)
 		}
 	}
 
-	checker := worker.New("PR checker", checkFunc, config.Default.MergeFeeBot.Timeout.BackgroundCheck, false)
+	checker := worker.New("PR checker", checkFunc, config.Default.Timeout.BackgroundCheck, false)
 	checker.StartWithTicker(ctx, wg)
 
 	done := make(chan os.Signal, 1)
@@ -77,7 +77,7 @@ func (a *App) Run(ctx context.Context) {
 func setup() {
 	config.SetConfig()
 
-	logLevel, err := log.ParseLevel(config.Default.MergeFeeBot.LogLevel)
+	logLevel, err := log.ParseLevel(config.Default.LogLevel)
 	if err != nil {
 		log.WithError(err).Fatal("failed to parse log level")
 	}

@@ -9,32 +9,24 @@ import (
 
 type (
 	Configuration struct {
-		MergeFeeBot MergeFeeBot `mapstructure:"merge-fee-bot"`
+		ServiceName string     `mapstructure:"service_name"`
+		LogLevel    string     `mapstructure:"log_level"`
+		Port        int        `mapstructure:"port"`
+		ClientURLs  ClientURLs `mapstructure:"client_urls"`
+		Github      Github     `mapstructure:"github"`
+		Payment     Payment    `mapstructure:"payment"`
+		Message     Message    `mapstructure:"message"`
+		Label       Label      `mapstructure:"label"`
+		User        User       `mapstructure:"user"`
+		Timeout     Timeout    `mapstructure:"timeout"`
+		Limitation  Limitation `mapstructure:"limitation"`
 	}
 
-	MergeFeeBot struct {
-		ServiceName string      `mapstructure:"service_name"`
-		LogLevel    string      `mapstructure:"log_level"`
-		ClientsURLs ClientsURLs `mapstructure:"clients_urls"`
-		HTTP        HTTP        `mapstructure:"http"`
-		Github      Github      `mapstructure:"github"`
-		Payment     Payment     `mapstructure:"payment"`
-		Message     Message     `mapstructure:"message"`
-		Label       Label       `mapstructure:"label"`
-		User        User        `mapstructure:"user"`
-		Timeout     Timeout     `mapstructure:"timeout"`
-		Limitations Limitations `mapstructure:"limitations"`
-	}
-
-	ClientsURLs struct {
+	ClientURLs struct {
 		BinanceDEX      string `mapstructure:"binance_dex"`
 		BinanceAPI      string `mapstructure:"binance_api"`
 		BinanceExplorer string `mapstructure:"binance_explorer"`
 		BackendAPI      string `mapstructure:"backend_api"`
-	}
-
-	HTTP struct {
-		Port int `mapstructure:"port"`
 	}
 
 	Github struct {
@@ -87,8 +79,8 @@ type (
 		BackgroundCheck time.Duration `mapstructure:"background_check"`
 	}
 
-	Limitations struct {
-		PrFiles int `mapstructure:"pr_files"`
+	Limitation struct {
+		PrFilesNumAllowed int `mapstructure:"pr_files_num_allowed"`
 	}
 )
 

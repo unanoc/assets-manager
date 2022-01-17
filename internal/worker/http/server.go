@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/trustwallet/assets-manager/internal/config"
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/events"
+	"github.com/trustwallet/assets-manager/internal/worker/events"
 )
 
 type Server struct {
@@ -19,7 +19,7 @@ type Server struct {
 
 // Run runs a server.
 func (s Server) Run() {
-	log.Infof("Running HTTP server at :%d", config.Default.MergeFeeBot.HTTP.Port)
+	log.Infof("Running HTTP server at :%d", config.Default.Port)
 
 	go func() {
 		if err := s.srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
@@ -41,7 +41,7 @@ func NewHTTPServer(eh *events.EventHandler) *Server {
 	http.HandleFunc("/", GithubEventsHandler(eh))
 
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%d", config.Default.MergeFeeBot.HTTP.Port),
+		Addr: fmt.Sprintf(":%d", config.Default.Port),
 	}
 
 	return &Server{srv: srv}

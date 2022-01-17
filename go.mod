@@ -19,6 +19,7 @@ require (
 require (
 	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
+	github.com/zondax/hid v0.9.0 // indirect
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
 )
 
@@ -64,7 +65,6 @@ require (
 	github.com/tendermint/tendermint v0.32.3 // indirect
 	github.com/tendermint/tm-db v0.1.1 // indirect
 	github.com/trustwallet/assets-go-libs v0.0.25
-	github.com/zondax/hid v0.9.0 // indirect
 	github.com/zondax/ledger-go v0.9.0 // indirect
 	golang.org/x/crypto v0.0.0-20211209193657-4570a0811e8b // indirect
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect

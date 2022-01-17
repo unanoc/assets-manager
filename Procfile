@@ -1,1 +1,1 @@
-web: HTTP_PORT=$PORT bin/app -c $HOME/configs/config.yml
+web: bin/app -c $HOME/configs/config.yml PORT=$PORT

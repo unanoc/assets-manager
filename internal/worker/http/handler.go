@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/trustwallet/assets-manager/internal/config"
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/events"
+	"github.com/trustwallet/assets-manager/internal/worker/events"
 )
 
 const (
@@ -24,7 +24,7 @@ var ErrUnknownEvent = errors.New("unknown event")
 func GithubEventsHandler(eh *events.EventHandler) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Validate webhook payload.
-		payloadBytes, err := ghlib.ValidatePayload(r, []byte(config.Default.MergeFeeBot.Github.AppWebhookSecret))
+		payloadBytes, err := ghlib.ValidatePayload(r, []byte(config.Default.Github.AppWebhookSecret))
 		if err != nil {
 			sendHTTPErrorResponse(w, err, http.StatusForbidden)
 

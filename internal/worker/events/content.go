@@ -44,27 +44,27 @@ func getPaymentParams(pr *github.PullRequest) *PaymentsParams {
 
 	createdTime := pr.GetCreatedAt().Unix() * 1000
 	memo := strconv.Itoa(pr.GetNumber())
-	payments := make([]Payment, len(config.Default.MergeFeeBot.Payment.Assets))
+	payments := make([]Payment, len(config.Default.Payment.Assets))
 
 	for i := range payments {
-		payments[i].Amount = config.Default.MergeFeeBot.Payment.Assets[i].Amount
-		payments[i].Symbol = config.Default.MergeFeeBot.Payment.Assets[i].Symbol
-		payments[i].Token = config.Default.MergeFeeBot.Payment.Assets[i].Token
-		payments[i].MinAmount = getMinAmount(config.Default.MergeFeeBot.Payment.AmountTolerancePercent,
-			config.Default.MergeFeeBot.Payment.Assets[i].Amount)
+		payments[i].Amount = config.Default.Payment.Assets[i].Amount
+		payments[i].Symbol = config.Default.Payment.Assets[i].Symbol
+		payments[i].Token = config.Default.Payment.Assets[i].Token
+		payments[i].MinAmount = getMinAmount(config.Default.Payment.AmountTolerancePercent,
+			config.Default.Payment.Assets[i].Amount)
 		payments[i].Memo = memo
 		payments[i].CreatedTime = createdTime
 		payments[i].EndTime = createdTime + monthInSec
 	}
 
-	qrTw, qrFull := getQR(config.Default.MergeFeeBot.Payment.Assets[0].Amount,
-		config.Default.MergeFeeBot.Payment.Address, memo)
+	qrTw, qrFull := getQR(config.Default.Payment.Assets[0].Amount,
+		config.Default.Payment.Address, memo)
 
 	return &PaymentsParams{
 		Payments: payments,
 		User:     pr.GetUser().GetLogin(),
-		Address:  config.Default.MergeFeeBot.Payment.Address,
-		Phrase:   config.Default.MergeFeeBot.Payment.Phrase,
+		Address:  config.Default.Payment.Address,
+		Phrase:   config.Default.Payment.Phrase,
 		QR:       fmt.Sprintf("**QR** code: [Trust]( %s ) | [other wallet]( %s )", qrTw, qrFull),
 	}
 }

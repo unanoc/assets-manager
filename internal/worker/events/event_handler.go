@@ -15,9 +15,9 @@ import (
 	"github.com/trustwallet/assets-go-libs/path"
 	"github.com/trustwallet/assets-go-libs/validation"
 	"github.com/trustwallet/assets-manager/internal/config"
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/blockchain"
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/github"
-	"github.com/trustwallet/assets-manager/internal/merge-fee-bot/metrics"
+	"github.com/trustwallet/assets-manager/internal/worker/blockchain"
+	"github.com/trustwallet/assets-manager/internal/worker/github"
+	"github.com/trustwallet/assets-manager/internal/worker/metrics"
 	"github.com/trustwallet/go-libs/client/api/backend"
 	"github.com/trustwallet/go-primitives/coin"
 	"github.com/trustwallet/go-primitives/types"
@@ -59,13 +59,13 @@ func (e EventHandler) HandlePullRequestOpened(ctx context.Context, event *gh.Pul
 	}
 
 	if err := e.github.SetLabelOnPullRequest(ctx, owner, repo, prNum, &gh.Label{
-		Name: gh.String(config.Default.MergeFeeBot.Label.Requested),
+		Name: gh.String(config.Default.Label.Requested),
 	}); err != nil {
 		return err
 	}
 
 	pp := getPaymentParams(event.GetPullRequest())
-	commentText := substituteDynamicContent(config.Default.MergeFeeBot.Message.Initial, &contentParams{PP: pp})
+	commentText := substituteDynamicContent(config.Default.Message.Initial, &contentParams{PP: pp})
 
 	return e.github.CreateCommentOnPullRequest(ctx, owner, repo, commentText, prNum)
 }
@@ -130,7 +130,7 @@ func (e EventHandler) HandlePullRequestReviewCommentCreated(ctx context.Context,
 func (e EventHandler) deleteCommentIfNeeded(ctx context.Context, owner, repo, prCreator,
 	user string, commentID int64,
 ) error {
-	if !config.Default.MergeFeeBot.User.DeleteCommentsFromExternal {
+	if !config.Default.User.DeleteCommentsFromExternal {
 		return nil
 	}
 
@@ -142,7 +142,7 @@ func (e EventHandler) deleteCommentIfNeeded(ctx context.Context, owner, repo, pr
 }
 
 func (e EventHandler) isUserCollaboratorOrCreator(creator, user string) bool {
-	isBot := strings.HasPrefix(user, config.Default.MergeFeeBot.ServiceName)
+	isBot := strings.HasPrefix(user, config.Default.ServiceName)
 	isCreator := user == creator
 
 	return isBot || isCreator || e.isCollaborator(user)
@@ -151,8 +151,8 @@ func (e EventHandler) isUserCollaboratorOrCreator(creator, user string) bool {
 func (e EventHandler) isCollaborator(user string) bool {
 	isCollaborator := false
 
-	if config.Default.MergeFeeBot.User.Collaborators != "" {
-		collaborators := strings.Split(config.Default.MergeFeeBot.User.Collaborators, ",")
+	if config.Default.User.Collaborators != "" {
+		collaborators := strings.Split(config.Default.User.Collaborators, ",")
 		for _, collaborator := range collaborators {
 			if user == collaborator {
 				isCollaborator = true
@@ -177,7 +177,7 @@ func (e EventHandler) checkPullStatus(ctx context.Context, owner, repo string, p
 	isExpectingPayment := !(e.hasReviewAlready(ctx, owner, repo, pr) || e.hasLabelAlready(ctx, owner, repo, pr))
 	if !isExpectingPayment {
 		if debug {
-			text := substituteDynamicContent(config.Default.MergeFeeBot.Message.Reviewed, nil)
+			text := substituteDynamicContent(config.Default.Message.Reviewed, nil)
 
 			return e.github.CreateCommentOnPullRequest(ctx, owner, repo, text, pr.GetNumber())
 		}
@@ -204,18 +204,18 @@ func (e EventHandler) checkPullStatus(ctx context.Context, owner, repo string, p
 	}).Debugf("Pull request #%d", pr.GetNumber())
 
 	// Check for too old -> close pr.
-	if prAgeHours >= config.Default.MergeFeeBot.Timeout.MaxAgeClose && prUpdateAgeHours > halfHour {
+	if prAgeHours >= config.Default.Timeout.MaxAgeClose && prUpdateAgeHours > halfHour {
 		return e.closePullRequest(ctx, owner, repo, pr)
 	}
 
 	if debug {
-		text := substituteDynamicContent(config.Default.MergeFeeBot.Message.NotReceived, nil)
+		text := substituteDynamicContent(config.Default.Message.NotReceived, nil)
 
 		return e.github.CreateCommentOnPullRequest(ctx, owner, repo, text, pr.GetNumber())
 	}
 
 	// Check if it's time for reminder.
-	if prUpdateAgeHours >= config.Default.MergeFeeBot.Timeout.MaxIdleRemind && prUpdateAgeHours > halfHour {
+	if prUpdateAgeHours >= config.Default.Timeout.MaxIdleRemind && prUpdateAgeHours > halfHour {
 		return e.remindToPay(ctx, owner, repo, pr)
 	}
 
@@ -225,11 +225,11 @@ func (e EventHandler) checkPullStatus(ctx context.Context, owner, repo string, p
 func (e EventHandler) approvePullRequest(ctx context.Context, owner, repo string,
 	pr *gh.PullRequest, ps *blockchain.PaymentStatus,
 ) error {
-	text := substituteDynamicContent(config.Default.MergeFeeBot.Message.Received, &contentParams{
+	text := substituteDynamicContent(config.Default.Message.Received, &contentParams{
 		PaidAmount:       ps.Amount,
 		PaidSymbol:       strings.Split(ps.Token, "-")[0],
 		PaidExplorerLink: ps.Transactions[0].ExplorerLink,
-		Moderators:       config.Default.MergeFeeBot.User.Moderators,
+		Moderators:       config.Default.User.Moderators,
 	})
 
 	if _, err := e.github.CreateReview(ctx, owner, repo, text, "APPROVE", pr.GetNumber()); err != nil {
@@ -237,12 +237,12 @@ func (e EventHandler) approvePullRequest(ctx context.Context, owner, repo string
 	}
 
 	if err := e.github.SetLabelOnPullRequest(ctx, owner, repo, pr.GetNumber(), &gh.Label{
-		Name: gh.String(config.Default.MergeFeeBot.Label.Paid),
+		Name: gh.String(config.Default.Label.Paid),
 	}); err != nil {
 		return err
 	}
 
-	assignedUsers := strings.Split(config.Default.MergeFeeBot.User.Moderators, ",")
+	assignedUsers := strings.Split(config.Default.User.Moderators, ",")
 	if _, err := e.github.AddAssignees(ctx, owner, repo, pr.GetNumber(), assignedUsers); err != nil {
 		return err
 	}
@@ -254,7 +254,7 @@ func (e EventHandler) approvePullRequest(ctx context.Context, owner, repo string
 		return err
 	}
 
-	text = substituteDynamicContent(config.Default.MergeFeeBot.Message.Burned, &contentParams{
+	text = substituteDynamicContent(config.Default.Message.Burned, &contentParams{
 		PaidAmount:       ps.Amount,
 		PaidSymbol:       strings.Split(ps.Token, "-")[0],
 		BurnExplorerLink: explorerLink,
@@ -264,7 +264,7 @@ func (e EventHandler) approvePullRequest(ctx context.Context, owner, repo string
 }
 
 func (e EventHandler) closePullRequest(ctx context.Context, owner, repo string, pr *gh.PullRequest) error {
-	text := substituteDynamicContent(config.Default.MergeFeeBot.Message.ClosingOldPr, nil)
+	text := substituteDynamicContent(config.Default.Message.ClosingOldPr, nil)
 	if err := e.github.CreateCommentOnPullRequest(ctx, owner, repo, text, pr.GetNumber()); err != nil {
 		return err
 	}
@@ -274,7 +274,7 @@ func (e EventHandler) closePullRequest(ctx context.Context, owner, repo string, 
 
 func (e EventHandler) remindToPay(ctx context.Context, owner, repo string, pr *gh.PullRequest) error {
 	pp := getPaymentParams(pr)
-	text := substituteDynamicContent(config.Default.MergeFeeBot.Message.Reminder, &contentParams{PP: pp})
+	text := substituteDynamicContent(config.Default.Message.Reminder, &contentParams{PP: pp})
 
 	return e.github.CreateCommentOnPullRequest(ctx, owner, repo, text, pr.GetNumber())
 }
@@ -286,7 +286,7 @@ func (e EventHandler) hasReviewAlready(ctx context.Context, owner, repo string, 
 	}
 
 	for _, review := range list {
-		if strings.HasPrefix(review.GetUser().GetLogin(), config.Default.MergeFeeBot.ServiceName) {
+		if strings.HasPrefix(review.GetUser().GetLogin(), config.Default.ServiceName) {
 			if review.GetState() == "APPROVED" {
 				return true
 			}
@@ -303,7 +303,7 @@ func (e EventHandler) hasLabelAlready(ctx context.Context, owner, repo string, p
 	}
 
 	for _, label := range labels {
-		if label.GetName() == config.Default.MergeFeeBot.Label.Paid {
+		if label.GetName() == config.Default.Label.Paid {
 			return true
 		}
 	}
@@ -401,7 +401,7 @@ func (e EventHandler) HandlePullRequestChangesPushed(ctx context.Context, event 
 func (e EventHandler) getFilesCheckSummary(files []*gh.CommitFile, repoOwner, repoName, branch string) string {
 	text := "**PR Summary**\n"
 
-	checkSummary := e.checkPullRequestFiles(files, config.Default.MergeFeeBot.Limitations.PrFiles)
+	checkSummary := e.checkPullRequestFiles(files, config.Default.Limitation.PrFilesNumAllowed)
 	if checkSummary != "" {
 		return fmt.Sprintf("%s%s", text, checkSummary)
 	}

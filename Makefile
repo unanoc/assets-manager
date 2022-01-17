@@ -7,6 +7,10 @@ VERSION := $(shell git describe --tags 2>/dev/null || git describe --all)
 BUILD := $(shell git rev-parse --short HEAD)
 DATETIME := $(shell date +"%Y.%m.%d-%H:%M:%S")
 
+# Service names.
+API_SERVICE := api
+WORKER_SERVICE := worker
+
 # Use linker flags to provide version/build settings.
 LDFLAGS=-ldflags "-X=$(PACKAGE)/build.Version=$(VERSION) -X=$(PACKAGE)/build.Build=$(BUILD) -X=$(PACKAGE)/build.Date=$(DATETIME)"
 
@@ -19,13 +23,19 @@ GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
 
 all: build start
 
-start:
-	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(PROJECT_NAME)
+start-api:
+	@echo "  >  Starting $(API_SERVICE)"
+	@-$(GOBIN)/$(API_SERVICE)
 
-build:
-	@echo "  >  Building app binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(PROJECT_NAME) ./cmd/app
+start-worker:
+	@echo "  >  Starting $(WORKER_SERVICE)"
+	@-$(GOBIN)/$(WORKER_SERVICE)
+
+go-build:
+	@echo "  >  Building $(API_SERVICE) binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE) ./cmd/$(API_SERVICE)
+	@echo "  >  Building $(WORKER_SERVICE) binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(WORKER_SERVICE) ./cmd/$(WORKER_SERVICE)
 
 test:
 	@echo "  >  Running unit tests"
