@@ -21,8 +21,6 @@ GOBIN := $(GOBASE)/bin
 # Go files.
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
 
-all: build start
-
 start-api:
 	@echo "  >  Starting $(API_SERVICE)"
 	@-$(GOBIN)/$(API_SERVICE)
@@ -45,12 +43,14 @@ fmt:
 	@echo "  >  Format all go files"
 	GOBIN=$(GOBIN) gofmt -w ${GOFMT_FILES}
 
-lint-install:
+lint: go-lint-install go-lint
+
+go-lint-install:
 ifeq (,$(wildcard test -f bin/golangci-lint))
 	@echo "  >  Installing golint"
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s
 endif
 
-lint: lint-install
+go-lint:
 	@echo "  >  Running golint"
 	bin/golangci-lint run --timeout=2m
