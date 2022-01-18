@@ -1,8 +1,12 @@
 package handlers
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
 
-func NewRouter() *gin.Engine {
+	"github.com/gin-gonic/gin"
+)
+
+func NewRouter() http.Handler {
 	router := gin.Default()
 
 	validationAPI := NewValidationAPI()

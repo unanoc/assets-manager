@@ -10,11 +10,12 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/trustwallet/assets-manager/internal/config"
+	"github.com/trustwallet/assets-manager/internal/http"
 	"github.com/trustwallet/assets-manager/internal/services"
 	"github.com/trustwallet/assets-manager/internal/services/worker/blockchain"
 	"github.com/trustwallet/assets-manager/internal/services/worker/events"
 	"github.com/trustwallet/assets-manager/internal/services/worker/github"
-	"github.com/trustwallet/assets-manager/internal/services/worker/http"
+	"github.com/trustwallet/assets-manager/internal/services/worker/handlers"
 	"github.com/trustwallet/assets-manager/internal/services/worker/metrics"
 	"github.com/trustwallet/go-libs/client/api/backend"
 	"github.com/trustwallet/go-libs/worker"
@@ -38,7 +39,8 @@ func NewApp() *App {
 	blockchainClient := blockchain.NewClient()
 	prometheus := metrics.NewPrometheus()
 	eventHandler := events.NewEventHandler(prometheus, githubClient, blockchainClient, &backendClient)
-	server := http.NewHTTPServer(eventHandler)
+	router := handlers.NewRouter(eventHandler)
+	server := http.NewHTTPServer(router)
 
 	return &App{
 		metrics:      prometheus,
