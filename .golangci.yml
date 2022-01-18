@@ -69,7 +69,7 @@ linters:
     - goconst
     - gocritic
     - gocyclo
-    - goerr113
+    # - goerr113
     - gofmt
     - gofumpt
     - goimports

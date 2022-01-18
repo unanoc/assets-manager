@@ -215,7 +215,7 @@ func (e EventHandler) checkPullStatus(ctx context.Context, owner, repo string, p
 	}
 
 	// Check if it's time for reminder.
-	if prUpdateAgeHours >= config.Default.Timeout.MaxIdleRemind && prUpdateAgeHours > halfHour {
+	if prUpdateAgeHours >= config.Default.Timeout.MaxIdleRemind {
 		return e.remindToPay(ctx, owner, repo, pr)
 	}
 

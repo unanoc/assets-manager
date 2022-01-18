@@ -73,7 +73,7 @@ user:
 
 timeout:
   max_age_close: 48h
-  max_idle_remind: 22h
+  max_idle_remind: 12h
   background_check: 1m
 
 limitation:
