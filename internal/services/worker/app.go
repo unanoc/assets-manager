@@ -10,11 +10,12 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/trustwallet/assets-manager/internal/config"
-	"github.com/trustwallet/assets-manager/internal/worker/blockchain"
-	"github.com/trustwallet/assets-manager/internal/worker/events"
-	"github.com/trustwallet/assets-manager/internal/worker/github"
-	"github.com/trustwallet/assets-manager/internal/worker/http"
-	"github.com/trustwallet/assets-manager/internal/worker/metrics"
+	"github.com/trustwallet/assets-manager/internal/services"
+	"github.com/trustwallet/assets-manager/internal/services/worker/blockchain"
+	"github.com/trustwallet/assets-manager/internal/services/worker/events"
+	"github.com/trustwallet/assets-manager/internal/services/worker/github"
+	"github.com/trustwallet/assets-manager/internal/services/worker/http"
+	"github.com/trustwallet/assets-manager/internal/services/worker/metrics"
 	"github.com/trustwallet/go-libs/client/api/backend"
 	"github.com/trustwallet/go-libs/worker"
 )
@@ -26,7 +27,7 @@ type App struct {
 }
 
 func NewApp() *App {
-	setup()
+	services.Setup()
 
 	githubClient, err := github.NewClient()
 	if err != nil {
@@ -72,15 +73,4 @@ func (a *App) Run(ctx context.Context) {
 
 	cancel()
 	wg.Wait()
-}
-
-func setup() {
-	config.SetConfig()
-
-	logLevel, err := log.ParseLevel(config.Default.LogLevel)
-	if err != nil {
-		log.WithError(err).Fatal("failed to parse log level")
-	}
-
-	log.SetLevel(logLevel)
 }

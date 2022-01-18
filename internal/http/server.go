@@ -6,11 +6,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/trustwallet/assets-manager/internal/config"
-	"github.com/trustwallet/assets-manager/internal/worker/events"
 )
 
 type Server struct {
@@ -19,11 +17,11 @@ type Server struct {
 
 // Run runs a server.
 func (s Server) Run() {
-	log.Infof("Running HTTP server at :%d", config.Default.Port)
+	log.WithField("port", config.Default.Port).Infof("Running HTTP server")
 
 	go func() {
 		if err := s.srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("listen: %s\n", err)
+			log.Fatalf("listen: %v", err)
 		}
 	}()
 }
@@ -35,13 +33,11 @@ func (s Server) Shutdown(ctx context.Context) error {
 	return s.srv.Shutdown(ctx)
 }
 
-// NewHTTPServer returns an instance of Server with registered HTTP router.
-func NewHTTPServer(eh *events.EventHandler) *Server {
-	http.Handle("/metrics", promhttp.Handler())
-	http.HandleFunc("/", GithubEventsHandler(eh))
-
+// NewHTTPServer returns an initialized HTTP server.
+func NewHTTPServer(router http.Handler) *Server {
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%d", config.Default.Port),
+		Addr:    fmt.Sprintf(":%d", config.Default.Port),
+		Handler: router,
 	}
 
 	return &Server{srv: srv}

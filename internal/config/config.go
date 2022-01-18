@@ -12,6 +12,7 @@ type (
 		ServiceName string     `mapstructure:"service_name"`
 		LogLevel    string     `mapstructure:"log_level"`
 		Port        int        `mapstructure:"port"`
+		Sentry      Sentry     `mapstructure:"sentry"`
 		ClientURLs  ClientURLs `mapstructure:"client_urls"`
 		Github      Github     `mapstructure:"github"`
 		Payment     Payment    `mapstructure:"payment"`
@@ -20,6 +21,12 @@ type (
 		User        User       `mapstructure:"user"`
 		Timeout     Timeout    `mapstructure:"timeout"`
 		Limitation  Limitation `mapstructure:"limitation"`
+		Validation  Validation `mapstructure:"validation"`
+	}
+
+	Sentry struct {
+		DSN        string  `mapstructure:"dsn"`
+		SampleRate float32 `mapstructure:"sample_rate"`
 	}
 
 	ClientURLs struct {
@@ -81,6 +88,16 @@ type (
 
 	Limitation struct {
 		PrFilesNumAllowed int `mapstructure:"pr_files_num_allowed"`
+	}
+
+	Validation struct {
+		Asset struct {
+			DecimalsMaxValue        int `mapstructure:"decimals_max_value"`
+			DescriptionMaxLength    int `mapstructure:"description_max_length"`
+			LinksMinRequired        int `mapstructure:"links_min_required"`
+			TagsMinRequired         int `mapstructure:"tags_min_required"`
+			CirculationHoldersLimit int `mapstructure:"circulation_holders_limit"`
+		} `mapstructure:"asset"`
 	}
 )
 

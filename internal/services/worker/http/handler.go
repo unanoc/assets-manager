@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/trustwallet/assets-manager/internal/config"
-	"github.com/trustwallet/assets-manager/internal/worker/events"
+	"github.com/trustwallet/assets-manager/internal/services/worker/events"
 )
 
 const (

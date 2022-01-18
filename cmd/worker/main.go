@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/trustwallet/assets-manager/internal/worker"
+	"github.com/trustwallet/assets-manager/internal/services/worker"
 )
 
 func main() {

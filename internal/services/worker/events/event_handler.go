@@ -11,9 +11,9 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/trustwallet/assets-manager/internal/config"
-	"github.com/trustwallet/assets-manager/internal/worker/blockchain"
-	"github.com/trustwallet/assets-manager/internal/worker/github"
-	"github.com/trustwallet/assets-manager/internal/worker/metrics"
+	"github.com/trustwallet/assets-manager/internal/services/worker/blockchain"
+	"github.com/trustwallet/assets-manager/internal/services/worker/github"
+	"github.com/trustwallet/assets-manager/internal/services/worker/metrics"
 	"github.com/trustwallet/assets-manager/pkg/http"
 	"github.com/trustwallet/assets-manager/pkg/image"
 	"github.com/trustwallet/assets-manager/pkg/path"
