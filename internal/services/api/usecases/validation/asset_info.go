@@ -196,11 +196,11 @@ func validateAssetInfoHolders(extTokenInfo *external.TokenInfo) error {
 		return fmt.Errorf("number of holders not checked: please, check it manually")
 	}
 
-	circulationHoldersLimit := config.Default.Validation.Asset.CirculationHoldersLimit
+	holdersMinRequired := config.Default.Validation.Asset.HoldersMinRequired
 
-	if extTokenInfo.HoldersCount < circulationHoldersLimit {
+	if extTokenInfo.HoldersCount < holdersMinRequired {
 		return fmt.Errorf("low token circulation: number of holders is %d, below limit of %d",
-			extTokenInfo.HoldersCount, circulationHoldersLimit)
+			extTokenInfo.HoldersCount, holdersMinRequired)
 	}
 
 	return nil

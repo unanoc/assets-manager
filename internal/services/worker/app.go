@@ -35,10 +35,11 @@ func NewApp() *App {
 		log.Fatalf("failed to create github instance: %v", err)
 	}
 
-	backendClient := backend.InitClient(config.Default.ClientURLs.BackendAPI, nil)
+	backendClient := backend.InitClient(config.Default.Clients.BackendAPI, nil)
 	blockchainClient := blockchain.NewClient()
 	prometheus := metrics.NewPrometheus()
 	eventHandler := events.NewEventHandler(prometheus, githubClient, blockchainClient, &backendClient)
+
 	router := handlers.NewRouter(eventHandler)
 	server := http.NewHTTPServer(router)
 

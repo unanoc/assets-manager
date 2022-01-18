@@ -1,37 +1,38 @@
-service_name:
-log_level: debug
+service_name: ""
+log_level: "debug"
 
-port: 4040
+port: 4444
 
 sentry:
   dsn: ""
   sample_rate: 1
 
-client_urls:
-  binance_dex: dex.binance.org
-  binance_api: https://api.binance.org
-  binance_explorer: https://explorer.binance.org
-  backend_api: https://api.trustwallet.com
+clients:
+  binance:
+    dex: "dex.binance.org"
+    api: "https://api.binance.org"
+    explorer: "https://explorer.binance.org"
+  backend_api: "https://api.trustwallet.com"
 
 github:
-  base_url: https://api.github.com
+  base_url: "https://api.github.com"
   app_id: 135062
-  app_webhook_secret: development
-  app_private_key:
-  repo_owner: trustwallet
-  repo_name: assets
+  app_webhook_secret: "development"
+  app_private_key: ""
+  repo_owner: "trustwallet"
+  repo_name: "assets"
 
 payment:
-  assets:
+  options:
     - amount: 1000
-      symbol: TWT
-      token: TWT-8C2
+      symbol: "TWT"
+      token: "TWT-8C2"
     - amount: 5
-      symbol: BNB
-      token: BNB
-  address: bnb1epax0un25cmay2e6vcuz5knnqhdp2qg7egdpeq
-  phrase:
-  amount_tolerance_percent: 96
+      symbol: "BNB"
+      token: "BNB"
+  address: "bnb1epax0un25cmay2e6vcuz5knnqhdp2qg7egdpeq"
+  seed_phrase: ""
+  tolerance_percent: 96
 
 message:
   initial: "Hi! In order to compensate for the efforts of processing PRs, we kindly ask for a contribution.\n
@@ -50,7 +51,7 @@ message:
     There will be a fee to process this request. None of it goes to the developers.\n
     Before paying the fee, make sure new tokens fulfill the minimum circulation and other acceptance criteria.\n
     If you are paying TWT for the submission, this will be burned automatically. There will be no refunds."
-  not_received: "Fee has not been received yet (or not fully).\n\n"
+  not_received: "Fee has not been received yet (or not fully)."
   received: "Fee is PAID, fantastic! Thanks! Review added.\n\n
     The PR will be evaluated soon by a maintainer, and if merged, the new logos should be visible in Trust Wallet.\n
     Please note that the app caches logos (up to several days; if you want to see changes immediately, use a new installation). See the [assets FAQ](https://github.com/trustwallet/assets#faq).\n
@@ -63,16 +64,16 @@ message:
     See the [Pull Request Fee FAQ](https://developer.trustwallet.com/add_new_asset/pr-fee)."
   closing_old_pr: "This PR is being closed due to inactivity. If you wish to continue, please have us reopen the PR before sending your payment, or just create a new one.\n
     Do NOT send payments for closed PR, as the fee may by lost!"
-  burned: "$PAID_AMOUNT $PAID_SYMBOL have been successfully [burned]($BURN_EXPLORER_LINK)"
+  burned: "$PAID_AMOUNT $PAID_SYMBOL have been successfully [burned]($BURN_EXPLORER_LINK)."
 
 label:
-  requested: 'Payment Status: Requested'
-  paid: 'Payment Status: Paid'
+  requested: "Payment Status: Requested"
+  paid: "Payment Status: Paid"
 
 user:
   delete_comments_from_external: true
-  collaborators: zachzwei,Iamdeadlyz,catenocrypt,vikmeup,hewigovens,Cryptocool1,cryptomanz,leedaniil,ramsty,bjt54
-  moderators: Iamdeadlyz,Cryptocool1,cryptomanz
+  collaborators: "zachzwei,Iamdeadlyz,catenocrypt,vikmeup,hewigovens,Cryptocool1,cryptomanz,leedaniil,ramsty,bjt54"
+  moderators: "Iamdeadlyz,Cryptocool1,cryptomanz"
 
 timeout:
   max_age_close: 48h
@@ -88,4 +89,4 @@ validation:
     description_max_length: 400
     links_min_required: 2
     tags_min_required: 1
-    circulation_holders_limit: 10000
+    holders_min_required: 10000

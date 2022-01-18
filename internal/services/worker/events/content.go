@@ -44,27 +44,27 @@ func getPaymentParams(pr *github.PullRequest) *PaymentsParams {
 
 	createdTime := pr.GetCreatedAt().Unix() * 1000
 	memo := strconv.Itoa(pr.GetNumber())
-	payments := make([]Payment, len(config.Default.Payment.Assets))
+	payments := make([]Payment, len(config.Default.Payment.Options))
 
 	for i := range payments {
-		payments[i].Amount = config.Default.Payment.Assets[i].Amount
-		payments[i].Symbol = config.Default.Payment.Assets[i].Symbol
-		payments[i].Token = config.Default.Payment.Assets[i].Token
-		payments[i].MinAmount = getMinAmount(config.Default.Payment.AmountTolerancePercent,
-			config.Default.Payment.Assets[i].Amount)
+		payments[i].Amount = config.Default.Payment.Options[i].Amount
+		payments[i].Symbol = config.Default.Payment.Options[i].Symbol
+		payments[i].Token = config.Default.Payment.Options[i].Token
+		payments[i].MinAmount = getMinAmount(config.Default.Payment.TolerancePercent,
+			config.Default.Payment.Options[i].Amount)
 		payments[i].Memo = memo
 		payments[i].CreatedTime = createdTime
 		payments[i].EndTime = createdTime + monthInSec
 	}
 
-	qrTw, qrFull := getQR(config.Default.Payment.Assets[0].Amount,
+	qrTw, qrFull := getQR(config.Default.Payment.Options[0].Amount,
 		config.Default.Payment.Address, memo)
 
 	return &PaymentsParams{
 		Payments: payments,
 		User:     pr.GetUser().GetLogin(),
 		Address:  config.Default.Payment.Address,
-		Phrase:   config.Default.Payment.Phrase,
+		Phrase:   config.Default.Payment.SeedPhrase,
 		QR:       fmt.Sprintf("**QR** code: [Trust]( %s ) | [other wallet]( %s )", qrTw, qrFull),
 	}
 }

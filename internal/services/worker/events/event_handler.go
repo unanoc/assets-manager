@@ -168,8 +168,6 @@ func (e EventHandler) checkPullStatus(ctx context.Context, owner, repo string, p
 		return nil
 	}
 
-	now := time.Now()
-
 	if pr.GetState() != "open" {
 		return nil
 	}
@@ -194,6 +192,7 @@ func (e EventHandler) checkPullStatus(ctx context.Context, owner, repo string, p
 		return e.approvePullRequest(ctx, owner, repo, pr, paymentStatus)
 	}
 
+	now := time.Now()
 	prAgeHours := now.Sub(pr.GetCreatedAt())
 	prUpdateAgeHours := now.Sub(pr.GetUpdatedAt())
 	halfHour := time.Duration(30) * time.Minute
@@ -264,7 +263,7 @@ func (e EventHandler) approvePullRequest(ctx context.Context, owner, repo string
 }
 
 func (e EventHandler) closePullRequest(ctx context.Context, owner, repo string, pr *gh.PullRequest) error {
-	text := substituteDynamicContent(config.Default.Message.ClosingOldPr, nil)
+	text := substituteDynamicContent(config.Default.Message.ClosingOldPR, nil)
 	if err := e.github.CreateCommentOnPullRequest(ctx, owner, repo, text, pr.GetNumber()); err != nil {
 		return err
 	}
