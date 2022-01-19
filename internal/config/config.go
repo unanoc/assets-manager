@@ -19,9 +19,9 @@ type Configuration struct {
 
 	Clients struct {
 		Binance struct {
-			DEX      string `mapstructure:"binance_dex"`
-			API      string `mapstructure:"binance_api"`
-			Explorer string `mapstructure:"binance_explorer"`
+			DEX      string `mapstructure:"dex"`
+			API      string `mapstructure:"api"`
+			Explorer string `mapstructure:"explorer"`
 		} `mapstructure:"binance"`
 
 		BackendAPI string `mapstructure:"backend_api"`

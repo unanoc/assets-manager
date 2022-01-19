@@ -1,1 +1,1 @@
-worker: bin/worker -c $HOME/config.yml
+web: bin/worker -c $HOME/config.yml
