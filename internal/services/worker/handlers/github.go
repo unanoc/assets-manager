@@ -63,7 +63,7 @@ func GithubEventsHandler(eh *events.EventHandler) func(w http.ResponseWriter, r 
 			}
 
 		default:
-			sendHTTPErrorResponse(w, ErrUnknownEvent, http.StatusBadRequest)
+			sendHTTPErrorResponse(w, nil, http.StatusBadRequest)
 
 			return
 		}
