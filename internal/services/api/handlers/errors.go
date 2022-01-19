@@ -12,6 +12,7 @@ type (
 	ErrorResponse struct {
 		Error ErrorDetails `json:"error"`
 	}
+
 	ErrorDetails struct {
 		Message string `json:"message"`
 	}

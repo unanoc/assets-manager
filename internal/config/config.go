@@ -89,6 +89,12 @@ type Configuration struct {
 			HoldersMinRequired   int `mapstructure:"holders_min_required"`
 		} `mapstructure:"asset"`
 	} `mapstructure:"validation"`
+
+	Tags []struct {
+		ID          string `mapstructure:"id"`
+		Name        string `mapstructure:"name"`
+		Description string `mapstructure:"description"`
+	} `mapstructure:"tags"`
 }
 
 // Default is a configuration instance.
