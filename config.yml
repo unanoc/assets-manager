@@ -17,7 +17,7 @@ clients:
 github:
   base_url: "https://api.github.com"
   app_id: 135062
-  app_webhook_secret: "development"
+  app_webhook_secret: ""
   app_private_key: ""
   repo_owner: "trustwallet"
   repo_name: "assets"
