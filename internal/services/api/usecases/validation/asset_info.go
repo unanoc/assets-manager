@@ -188,6 +188,17 @@ func validateAssetInfoTags(tags []string) error {
 		return fmt.Errorf("at least %d tag is required", tagsMinRequired)
 	}
 
+	tagMap := make(map[string]bool)
+	for _, tag := range config.Default.Tags {
+		tagMap[tag.ID] = true
+	}
+
+	for _, tag := range tags {
+		if _, exists := tagMap[tag]; !exists {
+			return fmt.Errorf("tag '%s' is not allowed", tag)
+		}
+	}
+
 	return nil
 }
 
