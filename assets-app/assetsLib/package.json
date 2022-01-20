@@ -1,0 +1,29 @@
+{
+  "name": "tw-assets-lib",
+  "version": "1.6.2",
+  "description": "TS functions related to Trust Wallet Assets.",
+  "main": "src/assetsLib.ts",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trustwallet/tw-assets-managment.git"
+  },
+  "author": "Trust Wallet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/trustwallet/tw-assets-managment/issues"
+  },
+  "homepage": "https://github.com/trustwallet/tw-assets-managment#readme",
+  "devDependencies": {
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "ethereum-checksum-address": "0.0.6"
+  }
+}

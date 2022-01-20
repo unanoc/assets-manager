@@ -1,0 +1,224 @@
+
+body {
+  font-family: sans-serif;
+  background: linear-gradient(131.62deg, #3375BB 9.39%, #1B63AF 73.53%);
+  line-height: 1.25;
+  color: #303030;
+  padding: 0 0 500px 0;
+}
+h1 {
+  color: #38659e;
+}
+a {
+  text-decoration: none;
+  color: #38659e;
+}
+a:hover {
+  text-decoration: underline;
+}
+button {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 100%;
+  border-radius: 7px;
+  border: none;
+  padding: 8px 16px;
+  margin: 4px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.main button {
+  color: white;
+  background: #1E2026;
+}
+#loading {
+  padding: 100px 0 1000px 0;
+}
+.input {
+  font-size: 105%;
+  padding: 4px;
+  margin: 4px;
+  border: 1px;
+  border-color: lightgray;
+  border-style: solid;
+  box-sizing: border-box;
+  border-radius: 3px;
+}
+textarea {
+  font-family: sans-serif;
+  border: 1;
+  padding: 3px;
+}
+.textarea-small {
+  color: gray;
+  background-color: lightgoldenrodyellow;
+  font-size: 80%;
+}
+.main {
+  background-color: white;
+  min-width: 500px;
+  max-width: 85%;
+  min-height: 400px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  padding: 10px;
+  overflow: auto;
+}
+.tab-pane {
+}
+.margined {
+  margin: 5px;
+}
+.center {
+  text-align: center;
+  margin: auto;
+}
+.padded {
+  padding: 5px;
+}
+.flexrow {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+#header {
+  justify-content: space-between;
+  color: white;
+}
+#menu-right {
+  text-align: right;
+  float: right;
+}
+.mainheader {
+  text-align: center;
+  font-size: 130%;
+  font-weight: bold;
+  padding: 10px;
+}
+#tab-add {
+  min-width: 300px;
+  max-width: 500px;
+}
+#pulls-list {
+  min-width: 300px;
+  max-width: 500px;
+}
+#token-view {
+  min-width: 300px;
+  max-width: 500px;
+}
+#search {
+  min-width: 300px;
+  max-width: 500px;
+}
+.smallfont {
+  font-size: 90%;
+  opacity: 80%;
+}
+.error {
+  color: red
+}
+.wide {
+  width: 100%;
+}
+.selection-list {
+  overflow: auto;
+  background-color: white;
+  border-style: solid;
+  border-width: 2px;
+  border-color: white;
+}
+#pulls-list-list {
+  min-height: 100px;
+  max-height: 450px;
+}
+#pull-content-list {
+  min-height: 100px;
+  max-height: 200px;
+}
+#token-view {
+  width: 100%;
+}
+#search {
+  width: 100%;
+}
+#token-search-list {
+  min-height: 100px;
+  max-height: 400px;
+}
+#footer-right {
+  text-align: right;
+  float: right;
+}
+.selection-item {
+  padding: 5px;
+  background-color: white;
+}
+.selection-item:hover {
+  background-color: #cbd7e8;
+}
+.selected-item {
+  background-color: #e0e6ee;
+}
+.tab-select {
+  padding: 8px;
+  border-radius: 7px 7px 0px 0px;
+}
+.pull-label-small {
+  margin: 2px;
+  padding: 2px;
+  border-radius: 5px;
+  font-size: 80%;
+  border: solid;
+  border-width: 1px;
+  border-color: gray;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 160px;
+  font-size: 80%;
+  background-color: lightgray;
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 20%;
+  margin-left: -60px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: lightgray transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
