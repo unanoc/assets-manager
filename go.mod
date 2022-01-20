@@ -12,8 +12,8 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.11.0
 	github.com/sirupsen/logrus v1.8.1
-	github.com/trustwallet/go-libs v0.2.23
-	github.com/trustwallet/go-primitives v0.0.20
+	github.com/trustwallet/go-libs v0.2.24
+	github.com/trustwallet/go-primitives v0.0.23
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410
 )
 

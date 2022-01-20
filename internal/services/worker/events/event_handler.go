@@ -18,25 +18,25 @@ import (
 	"github.com/trustwallet/assets-manager/pkg/image"
 	"github.com/trustwallet/assets-manager/pkg/path"
 	"github.com/trustwallet/assets-manager/pkg/validation"
-	"github.com/trustwallet/go-libs/client/api/backend"
+	assetsmanager "github.com/trustwallet/go-libs/client/api/assets-manager"
 	"github.com/trustwallet/go-primitives/coin"
 	"github.com/trustwallet/go-primitives/types"
 )
 
 type EventHandler struct {
-	metrics    *metrics.Prometheus
-	github     *github.Client
-	blockchain *blockchain.Client
-	backend    *backend.Client
+	metrics       *metrics.Prometheus
+	github        *github.Client
+	blockchain    *blockchain.Client
+	assetsManager *assetsmanager.Client
 }
 
 func NewEventHandler(metricsClient *metrics.Prometheus, githubClient *github.Client,
-	blockchainClient *blockchain.Client, backendClient *backend.Client) *EventHandler {
+	blockchainClient *blockchain.Client, assetsManager *assetsmanager.Client) *EventHandler {
 	return &EventHandler{
-		metrics:    metricsClient,
-		github:     githubClient,
-		blockchain: blockchainClient,
-		backend:    backendClient,
+		metrics:       metricsClient,
+		github:        githubClient,
+		blockchain:    blockchainClient,
+		assetsManager: assetsManager,
 	}
 }
 
@@ -480,7 +480,7 @@ func (e EventHandler) checkToken(tokenID, tokenType, repoOwner, repoName, branch
 	logoURL := path.GetAssetLogoGithubURL(repoOwner, repoName, branch, chain.Handle, tokenID)
 	infoURL := path.GetAssetInfoGithubURL(repoOwner, repoName, branch, chain.Handle, tokenID)
 
-	tokenInfo := &backend.AssetValidationReq{}
+	tokenInfo := &assetsmanager.AssetValidationReq{}
 	err = http.GetHTTPResponse(infoURL, tokenInfo)
 	if err != nil {
 		return fmt.Sprintf("Failed to get info.json content: %s (%s)", err.Error(), infoURL)
@@ -510,7 +510,7 @@ func (e EventHandler) checkToken(tokenID, tokenType, repoOwner, repoName, branch
 		explorerFromInfo = *tokenInfo.Explorer
 	}
 
-	explorerFromID, err := coin.GetCoinExploreURL(chain, tokenID)
+	explorerFromID, err := coin.GetCoinExploreURL(chain, tokenID, tokenType)
 	if err != nil {
 		return fmt.Sprintf("Failed to retrieve explore url: %v", err)
 	}
@@ -539,8 +539,8 @@ func (e EventHandler) checkToken(tokenID, tokenType, repoOwner, repoName, branch
 	return text
 }
 
-func (e EventHandler) checkAssetInfo(tokenInfo *backend.AssetValidationReq) string {
-	result, err := e.backend.ValidateAssetInfo(tokenInfo)
+func (e EventHandler) checkAssetInfo(tokenInfo *assetsmanager.AssetValidationReq) string {
+	result, err := e.assetsManager.ValidateAssetInfo(tokenInfo)
 	if err != nil {
 		log.Debugf(err.Error())
 

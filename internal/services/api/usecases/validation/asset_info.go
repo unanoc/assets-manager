@@ -147,7 +147,7 @@ func validateAssetInfoExplorer(explorer, tokenID, tokenType string) error {
 		return err
 	}
 
-	explorerStandart, err := coin.GetCoinExploreURL(chain, tokenID)
+	explorerStandart, err := coin.GetCoinExploreURL(chain, tokenID, tokenType)
 	if err != nil {
 		return err
 	}

@@ -17,7 +17,7 @@ import (
 	"github.com/trustwallet/assets-manager/internal/services/worker/github"
 	"github.com/trustwallet/assets-manager/internal/services/worker/handlers"
 	"github.com/trustwallet/assets-manager/internal/services/worker/metrics"
-	"github.com/trustwallet/go-libs/client/api/backend"
+	assetsmanager "github.com/trustwallet/go-libs/client/api/assets-manager"
 	"github.com/trustwallet/go-libs/worker"
 )
 
@@ -35,10 +35,10 @@ func NewApp() *App {
 		log.Fatalf("failed to create github instance: %v", err)
 	}
 
-	backendClient := backend.InitClient(config.Default.Clients.BackendAPI, nil)
+	assetsManagerClient := assetsmanager.InitClient(config.Default.Clients.AssetsManagerAPI, nil)
 	blockchainClient := blockchain.NewClient()
 	prometheus := metrics.NewPrometheus()
-	eventHandler := events.NewEventHandler(prometheus, githubClient, blockchainClient, &backendClient)
+	eventHandler := events.NewEventHandler(prometheus, githubClient, blockchainClient, &assetsManagerClient)
 
 	router := handlers.NewRouter(eventHandler)
 	server := http.NewHTTPServer(router)

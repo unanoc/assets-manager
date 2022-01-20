@@ -24,7 +24,7 @@ type Configuration struct {
 			Explorer string `mapstructure:"explorer"`
 		} `mapstructure:"binance"`
 
-		BackendAPI string `mapstructure:"backend_api"`
+		AssetsManagerAPI string `mapstructure:"assets_manager_api"`
 	} `mapstructure:"clients"`
 
 	Github struct {

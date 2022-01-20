@@ -223,8 +223,8 @@ func ValidateDescriptionWebsite(description, website string) error {
 	return nil
 }
 
-func ValidateExplorer(explorer, name string, chain coin.Coin, addr string) error {
-	explorerExpected, err := coin.GetCoinExploreURL(chain, addr)
+func ValidateExplorer(explorer, name string, chain coin.Coin, addr, tokenType string) error {
+	explorerExpected, err := coin.GetCoinExploreURL(chain, addr, tokenType)
 	if err != nil {
 		explorerExpected = ""
 	}
