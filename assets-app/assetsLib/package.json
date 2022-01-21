@@ -1,6 +1,6 @@
 {
   "name": "tw-assets-lib",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "description": "TS functions related to Trust Wallet Assets.",
   "main": "src/assetsLib.ts",
   "files": [
