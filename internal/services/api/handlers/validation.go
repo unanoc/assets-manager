@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/trustwallet/assets-manager/internal/services/api/usecases/validation"
 )
@@ -31,6 +32,7 @@ func (api *ValidationAPI) ValidateAssetInfo(c *gin.Context) {
 
 	response, err := api.validator.ValidateAssetInfo(request)
 	if err != nil {
+		log.Error(err)
 		handleResponse(c, err)
 
 		return

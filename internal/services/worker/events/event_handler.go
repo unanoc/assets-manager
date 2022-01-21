@@ -48,7 +48,10 @@ func (e EventHandler) HandlePullRequestOpened(ctx context.Context, event *gh.Pul
 	prNum := event.GetPullRequest().GetNumber()
 	prCreator := event.GetPullRequest().GetUser().GetLogin()
 
-	log.Debugf("PR #%d has been opened by %s", prNum, prCreator)
+	log.WithFields(log.Fields{
+		"pr_num":  prNum,
+		"creator": prCreator,
+	}).Debug("Pull request opened")
 
 	if err := e.HandlePullRequestChangesPushed(ctx, event); err != nil {
 		return err
@@ -83,11 +86,14 @@ func (e EventHandler) HandleIssueCommentCreated(ctx context.Context, event *gh.I
 	prNum := event.GetIssue().GetNumber()
 	commentID := event.GetComment().GetID()
 
+	log.WithFields(log.Fields{
+		"pr_num":  prNum,
+		"creator": commentCreator,
+	}).Debug("Issued comment created")
+
 	if e.isCollaborator(prCreator) {
 		return nil
 	}
-
-	log.Debugf("Comment in PR #%d has been created by %s", prNum, commentCreator)
 
 	pr, err := e.github.GetPullRequest(ctx, owner, repo, prNum)
 	if err != nil {
@@ -117,7 +123,10 @@ func (e EventHandler) HandlePullRequestReviewCommentCreated(ctx context.Context,
 	prNum := event.GetPullRequest().GetNumber()
 	commentCreator := event.GetComment().GetUser().GetLogin()
 
-	log.Debugf("Review Comment in PR #%d has been created by %s", prNum, commentCreator)
+	log.WithFields(log.Fields{
+		"pr_num":  prNum,
+		"creator": commentCreator,
+	}).Debug("Review comment created")
 
 	pr, err := e.github.GetPullRequest(ctx, owner, repo, prNum)
 	if err != nil {
@@ -375,6 +384,11 @@ func (e EventHandler) HandlePullRequestChangesPushed(ctx context.Context, event 
 	branch := event.GetPullRequest().GetHead().GetRef()
 	headOwner := event.GetPullRequest().GetHead().GetRepo().GetOwner().GetLogin()
 	headRepo := event.GetPullRequest().GetHead().GetRepo().GetName()
+
+	log.WithFields(log.Fields{
+		"pr_num":  pr.GetNumber(),
+		"creator": headOwner,
+	}).Debug("Pull request changes are pushed")
 
 	files, err := e.github.GetPullRequestFileList(ctx, owner, repo, pr.GetNumber(), 100)
 	if err != nil {

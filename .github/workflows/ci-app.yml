@@ -1,24 +1,26 @@
 name: CI Assets App
+
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
-  workflow_dispatch:
+    branches: [ main ]
 
 jobs:
-  check:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      - name: Install Dependencies
-        run: |
-          cd assets-app
-          npm install
-      - name: Run build
-        run: |
-          cd assets-app
-          npm run build
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12
+    - name: Install dependencies
+      run: |
+        cd assets-app
+        npm install
+
+    - name: Run build
+      run: |
+        cd assets-app
+        npm run build
