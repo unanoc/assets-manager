@@ -123,7 +123,7 @@ async function routePostToApi(request, response, url) {
         request.on("end", function(){
             //console.log('body', body);
 
-            const apiHost = "https://api.trustwallet.com";
+            const apiHost = "https://assets-manager-api.herokuapp.com";
             const fullUrl = apiHost + "/" + url;
             const options = {
                 method: 'POST',
