@@ -290,8 +290,8 @@ github.com/tendermint/tendermint v0.32.3 h1:GEnWpGQ795h5oTFNbfBLsY0LW/CW2j6p6Hti
 github.com/tendermint/tendermint v0.32.3/go.mod h1:ZK2c29jl1QRYznIRyRWRDsmm1yvtPzBRT00x4t1JToY=
 github.com/tendermint/tm-db v0.1.1 h1:G3Xezy3sOk9+ekhjZ/kjArYIs1SmwV+1OUgNkj7RgV0=
 github.com/tendermint/tm-db v0.1.1/go.mod h1:0cPKWu2Mou3IlxecH+MEUSYc1Ch537alLe6CpFrKzgw=
-github.com/trustwallet/assets-go-libs v0.0.30 h1:KBxK9opl6PLg8fbnQ+NfOFO1ftdkytJGM3kUWPNOtOA=
-github.com/trustwallet/assets-go-libs v0.0.30/go.mod h1:UzDwJQPNQ9MXfBJAYarlTKIh+KuGHfx94d9iT4Sk8Nc=
+github.com/trustwallet/assets-go-libs v0.0.31 h1:8c5nGmjSlIEKvRsFhVVPiOyB26uCzk5nwYNbnnvBsKQ=
+github.com/trustwallet/assets-go-libs v0.0.31/go.mod h1:UzDwJQPNQ9MXfBJAYarlTKIh+KuGHfx94d9iT4Sk8Nc=
 github.com/trustwallet/go-libs v0.2.24 h1:wte7oifZMkcuHO4Mbv7fJsKcGPpczXCRrnNvnpiuHSs=
 github.com/trustwallet/go-libs v0.2.24/go.mod h1:7QdAp1lcteKKI0DYqGoaO8KO4eTNYjGmg8vHy0YXkKc=
 github.com/trustwallet/go-primitives v0.0.24 h1:C1QGcX3dRL7gS2miJvSrRT732zRjob1Gd4D4dJvVwq8=
