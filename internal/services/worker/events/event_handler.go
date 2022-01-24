@@ -414,7 +414,7 @@ func (e EventHandler) HandlePullRequestChangesPushed(ctx context.Context, event 
 func (e EventHandler) getFilesCheckSummary(files []*gh.CommitFile, repoOwner, repoName, branch string) string {
 	text := "**PR Summary**\n"
 
-	checkSummary := e.checkPullRequestFiles(files, config.Default.Limitation.PrFilesNumAllowed)
+	checkSummary := e.checkPullRequestFiles(files, config.Default.Limitation.PrFilesNumAllowed, repoOwner)
 	if checkSummary != "" {
 		return fmt.Sprintf("%s%s", text, checkSummary)
 	}
@@ -460,12 +460,12 @@ func (e EventHandler) getFilesCheckSummary(files []*gh.CommitFile, repoOwner, re
 	return text
 }
 
-func (e EventHandler) checkPullRequestFiles(files []*gh.CommitFile, limit int) string {
+func (e EventHandler) checkPullRequestFiles(files []*gh.CommitFile, limit int, repoOwner string) string {
 	if len(files) == 0 {
 		return "No changed files found."
 	}
 
-	if len(files) > limit {
+	if len(files) > limit && !e.isCollaborator(repoOwner) {
 		return fmt.Sprintf("Too many changed files: %d (max %d).", len(files), limit)
 	}
 
