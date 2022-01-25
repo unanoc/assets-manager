@@ -173,10 +173,11 @@ func (c *Client) ClosePullRequest(ctx context.Context, owner, repo string, prNum
 }
 
 // GetOpenPullRequestsList returns a pull request list of repository.
-func (c *Client) GetOpenPullRequestsList(
-	ctx context.Context, owner, repo string, perpage int,
+func (c *Client) GetPullRequestsList(
+	ctx context.Context, owner, repo, state string, perpage int,
 ) ([]*github.PullRequest, error) {
 	pr, _, err := c.client.PullRequests.List(ctx, owner, repo, &github.PullRequestListOptions{
+		State:       state,
 		ListOptions: github.ListOptions{PerPage: perpage},
 	})
 	if err != nil {
@@ -197,4 +198,15 @@ func (c *Client) GetPullRequestFileList(ctx context.Context, owner, repo string,
 	}
 
 	return list, nil
+}
+
+// EditPullRequest edits the pull request.
+func (c *Client) EditPullRequest(ctx context.Context, owner, repo string, prNum int,
+	pr *github.PullRequest) (*github.PullRequest, error) {
+	pr, _, err := c.client.PullRequests.Edit(ctx, owner, repo, prNum, pr)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to edit pull request")
+	}
+
+	return pr, nil
 }

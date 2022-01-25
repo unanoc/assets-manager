@@ -55,8 +55,14 @@ func (a *App) Run(ctx context.Context) {
 	wg := &sync.WaitGroup{}
 
 	checkFunc := func() {
-		err := a.eventHandler.CheckStatusOfOpenPullRequests(ctx, config.Default.Github.RepoOwner,
+		err := a.eventHandler.CheckOpenPullRequests(ctx, config.Default.Github.RepoOwner,
 			config.Default.Github.RepoName, nil, false)
+		if err != nil {
+			log.Error(err)
+		}
+
+		err = a.eventHandler.CheckClosedPullRequests(ctx, config.Default.Github.RepoOwner,
+			config.Default.Github.RepoName)
 		if err != nil {
 			log.Error(err)
 		}

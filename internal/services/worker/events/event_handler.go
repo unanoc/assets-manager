@@ -104,7 +104,7 @@ func (e EventHandler) HandleIssueCommentCreated(ctx context.Context, event *gh.I
 	debugCheckAll := strings.Contains(commentBody, "/checkall")
 
 	if debugCheckAll {
-		return e.CheckStatusOfOpenPullRequests(ctx, owner, repo, pr, debugCheck)
+		return e.CheckOpenPullRequests(ctx, owner, repo, pr, debugCheck)
 	}
 
 	err = e.deleteCommentIfNeeded(ctx, owner, repo, prCreator, commentCreator, commentID)
@@ -339,12 +339,12 @@ func (e EventHandler) checkPaymentForPullRequest(pr *gh.PullRequest) (*blockchai
 	return &blockchain.PaymentStatus{}, nil
 }
 
-func (e EventHandler) CheckStatusOfOpenPullRequests(
+func (e EventHandler) CheckOpenPullRequests(
 	ctx context.Context, owner, repo string, pr *gh.PullRequest, debug bool,
 ) error {
-	prs, err := e.github.GetOpenPullRequestsList(ctx, owner, repo, 100)
+	prs, err := e.github.GetPullRequestsList(ctx, owner, repo, "open", 100)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get open pull requests: %w", err)
 	}
 
 	var triggeredPrIncluded bool
@@ -373,6 +373,36 @@ func (e EventHandler) CheckStatusOfOpenPullRequests(
 	}
 
 	e.metrics.SetPullRequestsToPay(prCountToPay)
+
+	return nil
+}
+
+func (e EventHandler) CheckClosedPullRequests(ctx context.Context, owner, repo string) error {
+	prs, err := e.github.GetPullRequestsList(ctx, owner, repo, "closed", 100)
+	if err != nil {
+		return fmt.Errorf("failed to get closed pull requests: %w", err)
+	}
+
+	for _, pr := range prs {
+		if *pr.Merged {
+			continue
+		}
+
+		paymentStatus, err := e.checkPaymentForPullRequest(pr)
+		if err != nil {
+			return err
+		}
+
+		if paymentStatus.Paid {
+			openState := "open"
+			pr.State = &openState
+
+			_, err = e.github.EditPullRequest(ctx, repo, owner, pr.GetNumber(), pr)
+			if err != nil {
+				return fmt.Errorf("failed to reopen pr: %w", err)
+			}
+		}
+	}
 
 	return nil
 }
