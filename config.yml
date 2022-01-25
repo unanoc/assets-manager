@@ -81,7 +81,7 @@ timeout:
   background_check: 1m
 
 limitation:
-  pr_files_num_allowed: 20
+  pr_files_num_allowed: 10
 
 validation:
   asset:
