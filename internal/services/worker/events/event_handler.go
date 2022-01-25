@@ -384,7 +384,7 @@ func (e EventHandler) CheckClosedPullRequests(ctx context.Context, owner, repo s
 	}
 
 	for _, pr := range prs {
-		if *pr.Merged {
+		if pr.GetMerged() {
 			continue
 		}
 
