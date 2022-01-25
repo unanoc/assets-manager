@@ -199,14 +199,3 @@ func (c *Client) GetPullRequestFileList(ctx context.Context, owner, repo string,
 
 	return list, nil
 }
-
-// EditPullRequest edits the pull request.
-func (c *Client) EditPullRequest(ctx context.Context, owner, repo string, prNum int,
-	pr *github.PullRequest) (*github.PullRequest, error) {
-	pr, _, err := c.client.PullRequests.Edit(ctx, owner, repo, prNum, pr)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to edit pull request")
-	}
-
-	return pr, nil
-}

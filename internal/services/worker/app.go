@@ -60,12 +60,6 @@ func (a *App) Run(ctx context.Context) {
 		if err != nil {
 			log.Error(err)
 		}
-
-		err = a.eventHandler.CheckClosedPullRequests(ctx, config.Default.Github.RepoOwner,
-			config.Default.Github.RepoName)
-		if err != nil {
-			log.Error(err)
-		}
 	}
 
 	checker := worker.New("PR checker", checkFunc, config.Default.Timeout.BackgroundCheck, false)

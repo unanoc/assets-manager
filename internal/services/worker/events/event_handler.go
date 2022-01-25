@@ -377,36 +377,6 @@ func (e EventHandler) CheckOpenPullRequests(
 	return nil
 }
 
-func (e EventHandler) CheckClosedPullRequests(ctx context.Context, owner, repo string) error {
-	prs, err := e.github.GetPullRequestsList(ctx, owner, repo, "closed", 100)
-	if err != nil {
-		return fmt.Errorf("failed to get closed pull requests: %w", err)
-	}
-
-	for _, pr := range prs {
-		if pr.GetMerged() {
-			continue
-		}
-
-		paymentStatus, err := e.checkPaymentForPullRequest(pr)
-		if err != nil {
-			return err
-		}
-
-		if paymentStatus.Paid {
-			openState := "open"
-			pr.State = &openState
-
-			_, err = e.github.EditPullRequest(ctx, repo, owner, pr.GetNumber(), pr)
-			if err != nil {
-				return fmt.Errorf("failed to reopen pr: %w", err)
-			}
-		}
-	}
-
-	return nil
-}
-
 func (e EventHandler) HandlePullRequestChangesPushed(ctx context.Context, event *gh.PullRequestEvent) error {
 	owner := event.GetRepo().GetOwner().GetLogin()
 	repo := event.GetRepo().GetName()
