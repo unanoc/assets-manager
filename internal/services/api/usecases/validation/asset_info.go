@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/trustwallet/assets-go-libs/validation"
 	"github.com/trustwallet/assets-go-libs/validation/info"
 	"github.com/trustwallet/assets-go-libs/validation/info/external"
@@ -171,6 +173,8 @@ func validateAssetInfoLinks(links []Link) error {
 			"Add as many as you can: twitter, github, telegram, reddit, etc", linksMinRequired, len(links))
 	}
 
+	log.Debugf("links in request: %v", links)
+
 	infoLinks := make([]info.Link, len(links))
 	for i := range links {
 		infoLinks[i] = info.Link{
@@ -183,6 +187,11 @@ func validateAssetInfoLinks(links []Link) error {
 }
 
 func validateAssetInfoTags(tags []string) error {
+	log.WithFields(log.Fields{
+		"count": len(tags),
+		"tags":  tags,
+	}).Debug("tags in request")
+
 	tagsMinRequired := config.Default.Validation.Asset.TagsMinRequired
 	if len(tags) < tagsMinRequired {
 		return fmt.Errorf("at least %d tag is required", tagsMinRequired)
