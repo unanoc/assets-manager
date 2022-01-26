@@ -89,7 +89,7 @@ validation:
     description_max_length: 400
     links_min_required: 2
     tags_min_required: 1
-    holders_min_required: 10000
+    holders_min_required: 5000
 
 tags:
   - id: stablecoin
