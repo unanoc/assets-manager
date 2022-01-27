@@ -15,7 +15,7 @@ const testLogoUrls = [
     "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x86876a5fCAcb52a197f194A2c8b2166Af327a6da/logo.png",
     "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xD5525D397898e5502075Ea5E830d8914f6F0affe/logo.png"
 ];
-const assetsAPI = "https://assets-manager-api.herokuapp.com/v1/github/oauth"
+const assetsAPI = "https://api.assets.trustwallet.com/v1/github/oauth"
 
 function addLog(message) {
     console.log(message);

@@ -6,4 +6,4 @@ The repository contains a several subprojects:
 
 - `API` - REST API for managing assets.
 - `Worker` - Github Bot for Pull Requests to Trust Wallet Assets repository, performing automated input checks and handling fees.
-- `Assets App` - Web app to help adding new tokens and managing the Trust Wallet assets repository.
+- `Web` - Web application to help adding new tokens and managing the Trust Wallet assets repository.
