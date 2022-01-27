@@ -21,6 +21,8 @@ func NewGithubAPI() API {
 	}
 }
 
+// @Description Redirects to github oauth
+// @Router /v1/github/oauth [get]
 func (api *GithubAPI) RedirectToOauth(c *gin.Context) {
 	scope := "public_repo%20read:user"
 
@@ -30,7 +32,9 @@ func (api *GithubAPI) RedirectToOauth(c *gin.Context) {
 	c.Redirect(http.StatusFound, githubURL)
 }
 
-func (api *GithubAPI) HandleCallback(c *gin.Context) {
+// @Description Gets github access token and redirects to the root of app
+// @Router /v1/github/oauth/callback [get]
+func (api *GithubAPI) HandleOauthCallback(c *gin.Context) {
 	code, ok := c.GetQuery("code")
 	if !ok {
 		log.Error(fmt.Errorf("code not found"))

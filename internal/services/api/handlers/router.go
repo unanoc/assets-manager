@@ -37,6 +37,6 @@ func (api *GithubAPI) Setup(router *gin.Engine) {
 
 	{
 		v1.GET("/github/oauth", api.RedirectToOauth)
-		v1.GET("/github/callback", api.HandleCallback)
+		v1.GET("/github/oauth/callback", api.HandleOauthCallback)
 	}
 }
