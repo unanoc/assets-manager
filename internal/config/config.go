@@ -24,16 +24,22 @@ type Configuration struct {
 			Explorer string `mapstructure:"explorer"`
 		} `mapstructure:"binance"`
 
-		AssetsManagerAPI string `mapstructure:"assets_manager_api"`
+		AssetsManager struct {
+			API string `mapstructure:"api"`
+			App string `mapstructure:"app"`
+		} `mapstructure:"assets_manager"`
 	} `mapstructure:"clients"`
 
 	Github struct {
-		BaseURL          string `mapstructure:"base_url"`
+		APIURL           string `mapstructure:"api_url"`
 		AppID            int64  `mapstructure:"app_id"`
 		AppWebhookSecret string `mapstructure:"app_webhook_secret"`
 		AppPrivateKey    string `mapstructure:"app_private_key"`
 		RepoOwner        string `mapstructure:"repo_owner"`
 		RepoName         string `mapstructure:"repo_name"`
+		BaseURL          string `mapstructure:"base_url"`
+		ClientID         string `mapstructure:"client_id"`
+		ClientSecret     string `mapstructure:"client_secret"`
 	} `mapstructure:"github"`
 
 	Payment struct {

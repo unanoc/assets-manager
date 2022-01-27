@@ -35,7 +35,7 @@ func NewApp() *App {
 		log.Fatalf("failed to create github instance: %v", err)
 	}
 
-	assetsManagerClient := assetsmanager.InitClient(config.Default.Clients.AssetsManagerAPI, nil)
+	assetsManagerClient := assetsmanager.InitClient(config.Default.Clients.AssetsManager.API, nil)
 	blockchainClient := blockchain.NewClient()
 	prometheus := metrics.NewPrometheus()
 	eventHandler := events.NewEventHandler(prometheus, githubClient, blockchainClient, &assetsManagerClient)

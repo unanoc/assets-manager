@@ -12,15 +12,21 @@ clients:
     dex: "dex.binance.org"
     api: "https://api.binance.org"
     explorer: "https://explorer.binance.org"
-  assets_manager_api: "https://assets-manager-api.herokuapp.com"
+  assets_manager:
+    api: "https://assets-manager-api.herokuapp.com"
+    app: "https://assets-manager-app.herokuapp.com"
 
 github:
-  base_url: "https://api.github.com"
+  api_url: "https://api.github.com"
   app_id: 135062
   app_webhook_secret: ""
   app_private_key: ""
   repo_owner: "trustwallet"
   repo_name: "assets"
+
+  base_url: "https://github.com"
+  client_id: ""
+  client_secret: ""
 
 payment:
   options:

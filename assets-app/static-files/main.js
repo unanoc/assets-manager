@@ -15,6 +15,7 @@ const testLogoUrls = [
     "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x86876a5fCAcb52a197f194A2c8b2166Af327a6da/logo.png",
     "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xD5525D397898e5502075Ea5E830d8914f6F0affe/logo.png"
 ];
+const assetsAPI = "https://assets-manager-api.herokuapp.com/v1/github/oauth"
 
 function addLog(message) {
     console.log(message);
@@ -956,11 +957,11 @@ function start() {
             this.selectedTag = '';
         },
         methods: {
-            updateFromText: function() {
+            updateFromText: function () {
                 this.tokenInput.tags = this.textToArray(this.tagsText);
                 this.updateText();
             },
-            updateText: function() {
+            updateText: function () {
                 this.tagsText = this.arrayToText(this.tokenInput.tags);
             },
             toggleTag: function () {
@@ -976,7 +977,7 @@ function start() {
                 }
                 this.updateText();
             },
-            arrayToText: function(tags) {
+            arrayToText: function (tags) {
                 let t = '';
                 for (i in tags) {
                     if (t) { t += ' '; }
@@ -984,7 +985,7 @@ function start() {
                 }
                 return t;
             },
-            textToArray: function(text) {
+            textToArray: function (text) {
                 text = text.replace(',', '');
                 let arr = text.split(' ');
                 return arr.filter(t => (t.length > 0)); // filter empty ones
@@ -1629,10 +1630,10 @@ function start() {
             this.userToken = getUserToken();
             this.loginName = await checkUser(this.userToken);
             this.appMode = getAppMode();
-            this.activeTab = 
-                (this.appMode === 'search') ? 'tab-search' : 
-                (this.appMode === 'maintainer') ? 'tab-prs' :
-                'tab-add';
+            this.activeTab =
+                (this.appMode === 'search') ? 'tab-search' :
+                    (this.appMode === 'maintainer') ? 'tab-prs' :
+                        'tab-add';
             const resp = await fetch("/get-version");
             if (resp.status == 200) {
                 this.version = await resp.text();
@@ -1684,7 +1685,7 @@ function start() {
             },
             */
             loginActionUrl: function () {
-                return `/githubLoginRedirect`;
+                return assetsAPI;
             },
         }
     });

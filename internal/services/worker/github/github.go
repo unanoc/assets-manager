@@ -23,8 +23,8 @@ func NewClient() (*Client, error) {
 		return nil, errors.Wrap(err, "failed to create a transport without installation")
 	}
 
-	client, err := github.NewEnterpriseClient(config.Default.Github.BaseURL,
-		config.Default.Github.BaseURL, &http.Client{Transport: tr})
+	client, err := github.NewEnterpriseClient(config.Default.Github.APIURL,
+		config.Default.Github.APIURL, &http.Client{Transport: tr})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create a github client")
 	}
@@ -40,8 +40,8 @@ func NewClient() (*Client, error) {
 		return nil, errors.Wrap(err, "failed to create a transport with installation")
 	}
 
-	client, err = github.NewEnterpriseClient(config.Default.Github.BaseURL,
-		config.Default.Github.BaseURL, &http.Client{Transport: tr2})
+	client, err = github.NewEnterpriseClient(config.Default.Github.APIURL,
+		config.Default.Github.APIURL, &http.Client{Transport: tr2})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create a github client")
 	}
