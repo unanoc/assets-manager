@@ -80,7 +80,7 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist
 
 # Gatsby files
 .cache/
@@ -107,9 +107,9 @@ dist
 assetsLib./node_modules
 assetsLib/assetsLib.js
 assetsLib/assetsLib.es.js
-assetsLib/dist/
+# assetsLib/dist/
 
-static-files/bundle.js
+# static-files/bundle.js
 static-files/assetsLib.es.js
 
 .env
