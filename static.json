@@ -1,4 +1,10 @@
 {
     "root": "web/static-files",
-    "clean_urls": true
+    "clean_urls": true,
+    "routes": {
+        "/list": "index.html",
+        "/search": "index.html",
+        "/maintainer": "index.html",
+        "/full": "index.html"
+    }
 }
