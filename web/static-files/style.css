@@ -1,9 +1,10 @@
 
 body {
-  font-family: 'IBM Plex Sans', sans-serif !important;
-  background: linear-gradient(131.62deg, #0B65C6 9.39%, #0B65C6 73.53%);
+  font-family: sans-serif;
+  background: linear-gradient(131.62deg, #3375BB 9.39%, #1B63AF 73.53%);
   line-height: 1.25;
   color: #303030;
+  padding: 0 0 500px 0;
 }
 h1 {
   color: #38659e;
@@ -15,24 +16,25 @@ a {
 a:hover {
   text-decoration: underline;
 }
-.btn-primary {
-  background-color: #0B65C6 !important;
+button {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 100%;
+  border-radius: 7px;
+  border: none;
+  padding: 8px 16px;
+  margin: 4px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
 }
-
-.btn-outline-primary {
-  color: #0B65C6 !important;
-  border-color: #0B65C6 !important;
+.main button {
+  color: white;
+  background: #1E2026;
 }
-
-.btn-outline-primary:hover {
-  color: white !important;
-  background-color: #0B65C6 !important;
-}
-
 #loading {
   padding: 100px 0 1000px 0;
 }
-
 .input {
   font-size: 105%;
   padding: 4px;
@@ -53,7 +55,20 @@ textarea {
   background-color: lightgoldenrodyellow;
   font-size: 80%;
 }
-
+.main {
+  background-color: white;
+  min-width: 500px;
+  max-width: 85%;
+  min-height: 400px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  padding: 10px;
+  overflow: auto;
+}
+.tab-pane {
+}
 .margined {
   margin: 5px;
 }
@@ -83,7 +98,22 @@ textarea {
   font-weight: bold;
   padding: 10px;
 }
-
+#tab-add {
+  min-width: 300px;
+  max-width: 500px;
+}
+#pulls-list {
+  min-width: 300px;
+  max-width: 500px;
+}
+#token-view {
+  min-width: 300px;
+  max-width: 500px;
+}
+#search {
+  min-width: 300px;
+  max-width: 500px;
+}
 .smallfont {
   font-size: 90%;
   opacity: 80%;
@@ -101,13 +131,30 @@ textarea {
   border-width: 2px;
   border-color: white;
 }
-
+#pulls-list-list {
+  min-height: 100px;
+  max-height: 450px;
+}
+#pull-content-list {
+  min-height: 100px;
+  max-height: 200px;
+}
+#token-view {
+  width: 100%;
+}
+#search {
+  width: 100%;
+}
+#token-search-list {
+  min-height: 100px;
+  max-height: 400px;
+}
 #footer-right {
   text-align: right;
   float: right;
 }
 .selection-item {
-  padding: 6px;
+  padding: 5px;
   background-color: white;
 }
 .selection-item:hover {
