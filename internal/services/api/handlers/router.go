@@ -21,6 +21,7 @@ func (api *ValidationAPI) Setup(router *gin.Engine) {
 
 	{
 		v1.POST("/validate/asset_info", api.ValidateAssetInfo)
+		v1.GET("/validate/url/status", api.CheckURLStatus)
 	}
 }
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -39,4 +40,26 @@ func (api *ValidationAPI) ValidateAssetInfo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+// @Description Checks URL's status
+// @Router /v1/validate/url/status [get]
+func (api *ValidationAPI) CheckURLStatus(c *gin.Context) {
+	url, ok := c.GetQuery("url")
+	if !ok {
+		log.Error(fmt.Errorf("url not found"))
+		abortWithStatusJSON(c, http.StatusBadRequest)
+
+		return
+	}
+
+	resp, err := api.validator.CheckURLStatus(url)
+	if err != nil {
+		log.Error(err)
+		handleResponse(c, err)
+
+		return
+	}
+
+	c.JSON(resp.StatusCode, resp)
 }
