@@ -1,7 +1,6 @@
 import { isEthereumAddress, toChecksum } from "./eth-address";
 import { fetchUniversal, httpPostFromBrowser } from "./fetch";
 
-const DescriptionMaxLength = 500;
 export const DecimalsMaxValue = 18;
 export const InfoAllowedKeys = ["name", "type", "symbol", "decimals", "description", "website", "explorer", "status", "id", "links"];
 // Supported keys in links, and their mandatory prefix
@@ -28,6 +27,7 @@ export const LinksKeys = {
 //const LinksMinRequired = 2;
 //const linksKeysString = Object.keys(LinksKeys).reduce(function (agg, item) { return agg + item + ","; }, '');
 //const linksMediumContains = 'medium.com';
+const assetsAPI = "https://api.assets.trustwallet.com"
 
 export interface TagDescription {
     id: string;
@@ -132,15 +132,15 @@ export function explorerUrlForToken(chainType: string, contract: string): string
             case "bep20": return `https://bscscan.com/token/${contract}`;
             case "tt20": return `https://viewblock.io/thundercore/address/${contract}`;
             case "nep5": `https://neo.tokenview.com/en/token/0x${contract}`;
-            case "nrc20": return `https://nulscan.io/token/info?contractAddress=${contract}`;
-            case "vet": return `https://www.wanscan.org/token/${contract}`;
-            case "spl": return `https://explorer.solana.com/address/${contract}`;
-            case "trc21": return `https://scan.tomochain.com/address/${contract}`;
-            case "kava": return "https://www.mintscan.io/kava";
-            case "ontology": return "https://explorer.ont.io";
-            case "go20": return `https://explorer.gochain.io/addr/${contract}`;
-            case "etc20": return `https://blockscout.com/etc/mainnet/tokens/${contract}`;
-            case "polygon": return `https://polygonscan.com/token/${contract}`;
+            case "nrc20": return `https://nulscan.io/token/info?contractAddress=${contract}`;
+            case "vet": return `https://www.wanscan.org/token/${contract}`;
+            case "spl": return `https://explorer.solana.com/address/${contract}`;
+            case "trc21": return `https://scan.tomochain.com/address/${contract}`;
+            case "kava": return "https://www.mintscan.io/kava";
+            case "ontology": return "https://explorer.ont.io";
+            case "go20": return `https://explorer.gochain.io/addr/${contract}`;
+            case "etc20": return `https://blockscout.com/etc/mainnet/tokens/${contract}`;
+            case "polygon": return `https://polygonscan.com/token/${contract}`;
         }
     }
     return "";
@@ -190,7 +190,7 @@ export function normalizeType(tokenType: string) {
         case "nrc20":
         case "vet":
         case "polygon":
-                return tokenType.toUpperCase();
+            return tokenType.toUpperCase();
 
         default:
             return ""
@@ -357,7 +357,7 @@ export async function checkUrlWithFetch(targetUrl: string): Promise<number> {
 }
 
 function errorHead(error): string {
-    return error.toString().substring(0, 400-1);
+    return error.toString().substring(0, 400 - 1);
 }
 
 /*
@@ -444,10 +444,10 @@ export async function checkTokenInfo(tokenInfo: TokenInfo, urlChecker: UrlChecke
         res.push({ res: 2, msg: "Info.json must not be missing" });
     } else {
         if (fromBrowser) {
-            let resp = await httpPostFromBrowser('/route-to-be/v1/validate/asset_info', tokenInfo.info);
+            let resp = await httpPostFromBrowser(`${assetsAPI}/v1/validate/asset_info`, tokenInfo.info);
             //console.log(resp);
             if (resp[1]['errors']) {
-                for(var k in resp[1]['errors']) {
+                for (var k in resp[1]['errors']) {
                     //console.log(resp[1]['errors'][k]);
                     res.push({ res: 2, msg: resp[1]['errors'][k]['message'] });
                 }
@@ -459,7 +459,7 @@ export async function checkTokenInfo(tokenInfo: TokenInfo, urlChecker: UrlChecke
             (await checkTokenInfoLogo(tokenInfo, imgDimsCalc)).forEach(r => res.push(r));
         } catch (ex) {
             res.push({ res: 1, msg: `Error while checking logo; ${errorHead(ex)}` });
-        }        
+        }
     }
 
     return AggregateCheckResults(res);
@@ -551,8 +551,7 @@ export async function checkTokenInfoLogo(tokenInfo: TokenInfo, imgDimsCalc: Imag
 }
 
 export async function getExternalTokenInfo(tokenType: string, tokenAddress: string, fromBrowser: boolean): Promise<unknown> {
-    try
-    {
+    try {
         switch (tokenType.toLowerCase()) {
             case 'erc20':
                 return await getTokenInfoEthplorer(tokenAddress, fromBrowser);
@@ -644,7 +643,7 @@ function parseFragmentFromEnd(page: string, fragmentStart: string, fragmentEnd: 
     if (idx2 < rangeLen) {
         throw `Could not parse item from explorer page; closing fragment not found, ${url} '${fragmentEnd}' ${idx2} ${page.length} ${errorHead(page)}`;
     }
-    const range = page.substring(idx2 - rangeLen, idx2);  
+    const range = page.substring(idx2 - rangeLen, idx2);
     const idx1 = range.indexOf(fragmentStart);
     //console.log("idx1", idx1);
     if (idx1 < 0) {
@@ -720,25 +719,25 @@ async function retrieveAndCheckHoldersLimit(tokenType: string, tokenAddress: str
 }
 */
 
-function checkHoldersLimit(externalTokenInfo: unknown): {res: number, msg: string} {
+function checkHoldersLimit(externalTokenInfo: unknown): { res: number, msg: string } {
     if (!externalTokenInfo) {
-        return {res: 1, msg: `No. of holders not checked, external info not available; ${externalTokenInfo}`};
+        return { res: 1, msg: `No. of holders not checked, external info not available; ${externalTokenInfo}` };
     }
     const holders = getTokenCirculationFromExternalInfo(externalTokenInfo);
     if (!holders || holders === '?') {
         // could not check
-        return {res: 1, msg: `No. of holders not checked; '${holders}'`};
+        return { res: 1, msg: `No. of holders not checked; '${holders}'` };
     }
     var holdersNum = safeParseInt(holders);
     //console.log('holders', holders, holdrsNum);
     if (holdersNum == NaN) {
         return { res: 1, msg: `No. of holders not checked, NaN; (${holdersNum} ${holders})` };
     }
-    
+
     if (holdersNum >= CirculationHoldersLimit) {
-        return {res: 0, msg: `Token circulation OK (no. of holders: ${holdersNum})`};
+        return { res: 0, msg: `Token circulation OK (no. of holders: ${holdersNum})` };
     }
-    return {res: 2, msg: `Low token circulation: no. of holders is ${holdersNum}, below limit of ${CirculationHoldersLimit}`};
+    return { res: 2, msg: `Low token circulation: no. of holders is ${holdersNum}, below limit of ${CirculationHoldersLimit}` };
 }
 
 export function safeParseInt(value: string): number {

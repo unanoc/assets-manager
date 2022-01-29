@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.tokenIdFromAssetId = exports.safeParseInt = exports.getTokenCirculationSafe = exports.getTokenCirculation = exports.getExternalTokenInfo = exports.checkTokenInfoLogo = exports.AggregateCheckResults = exports.checkTokenInfo = exports.isInfoTagsValid = exports.checkUrlWithFetch = exports.tokenIdsFromFiles = exports.checkPrFiles = exports.PrFileInfo = exports.tokenIdFromFile = exports.tokenInfoOfExistingTokenInRepo = exports.tokenInfoOfExistingToken = exports.normalizeType = exports.chainFromAssetType = exports.explorerUrlForToken = exports.explorerUrlForChain = exports.TokenInfo = exports.LinkItem = exports.TagValues = exports.LinksKeys = exports.InfoAllowedKeys = exports.DecimalsMaxValue = void 0;
 const eth_address_1 = require("./eth-address");
 const fetch_1 = require("./fetch");
-const DescriptionMaxLength = 500;
 exports.DecimalsMaxValue = 18;
 exports.InfoAllowedKeys = ["name", "type", "symbol", "decimals", "description", "website", "explorer", "status", "id", "links"];
 // Supported keys in links, and their mandatory prefix
@@ -36,6 +35,10 @@ exports.LinksKeys = {
     "coingecko": "https://coingecko.com/",
     "source_code": "" // other than github
 };
+//const LinksMinRequired = 2;
+//const linksKeysString = Object.keys(LinksKeys).reduce(function (agg, item) { return agg + item + ","; }, '');
+//const linksMediumContains = 'medium.com';
+const assetsAPI = "https://api.assets.trustwallet.com";
 ;
 exports.TagValues = [
     {
@@ -440,7 +443,7 @@ function checkTokenInfo(tokenInfo, urlChecker, imgDimsCalc, fromBrowser) {
         }
         else {
             if (fromBrowser) {
-                let resp = yield fetch_1.httpPostFromBrowser('/route-to-be/v1/validate/asset_info', tokenInfo.info);
+                let resp = yield fetch_1.httpPostFromBrowser(`${assetsAPI}/v1/validate/asset_info`, tokenInfo.info);
                 //console.log(resp);
                 if (resp[1]['errors']) {
                     for (var k in resp[1]['errors']) {
