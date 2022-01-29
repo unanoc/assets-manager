@@ -14,7 +14,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/trustwallet/assets-go-libs v0.0.31
 	github.com/trustwallet/go-libs v0.2.24
-	github.com/trustwallet/go-primitives v0.0.24
+	github.com/trustwallet/go-primitives v0.0.27
 )
 
 require (
