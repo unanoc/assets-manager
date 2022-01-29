@@ -369,10 +369,14 @@ async function getPrFiles(userToken, prNum) {
 }
 
 async function checkUrlByBackend(url) {
+    /*
+    TODO Remove temporarily, api is missing
     const beUrl = `/checkUrl?url=${encodeURI(url)}`;
     console.log(`checkUrlByBackend ${beUrl}`);
     let resp = await fetch(beUrl);
     return resp.status;
+    */
+    return 200;
 }
 
 function start() {
