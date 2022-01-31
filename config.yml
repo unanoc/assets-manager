@@ -137,7 +137,9 @@ tags:
   - id: gamefi
     name: GameFi
     description: Combination of gaming and DeFi, is the intersection of blockchain-based gaming and DeFi services.
-  # TW Specific
   - id: staking-native
     name: Staking Native
     description: Coins/Blockchains that are used for staking to secure the network to receive rewards. Supported by Trust Wallet.
+  - id: heco-tag
+    name: Heco
+    description: Heco tokens.
