@@ -12,9 +12,9 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.11.0
 	github.com/sirupsen/logrus v1.8.1
-	github.com/trustwallet/assets-go-libs v0.0.31
-	github.com/trustwallet/go-libs v0.2.24
-	github.com/trustwallet/go-primitives v0.0.27
+	github.com/trustwallet/assets-go-libs v0.0.37
+	github.com/trustwallet/go-libs v0.2.25
+	github.com/trustwallet/go-primitives v0.0.28
 )
 
 require (
