@@ -37,7 +37,7 @@ func (api *GithubAPI) RedirectToOauth(c *gin.Context) {
 func (api *GithubAPI) HandleOauthCallback(c *gin.Context) {
 	code, ok := c.GetQuery("code")
 	if !ok {
-		log.Error(fmt.Errorf("code not found"))
+		log.Debug(fmt.Errorf("code not found"))
 		abortWithStatusJSON(c, http.StatusBadRequest)
 
 		return

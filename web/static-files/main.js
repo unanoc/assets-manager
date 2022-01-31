@@ -371,8 +371,14 @@ async function getPrFiles(userToken, prNum) {
 async function checkUrlByBackend(url) {
     const beUrl = `${assetsAPI}/v1/validate/url/status?url=${encodeURI(url)}`;
     console.log(`checkUrlByBackend ${beUrl}`);
-    let resp = await fetch(beUrl);
-    return resp.status;
+    try {
+        let resp = await fetch(beUrl);
+        console.log(resp);
+        return resp.status_code || 500;
+    } catch (error) {
+        console.log(error);
+        return 500;
+    }
 }
 
 function start() {

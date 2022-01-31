@@ -16,15 +16,13 @@ import (
 	"github.com/trustwallet/go-primitives/types"
 )
 
-func (i *Instance) ValidateAssetInfo(asset AssetInfoRequest) (*AssetInfoResponse, error) {
+func (i *Instance) ValidateAssetInfo(asset AssetInfoRequest) *AssetInfoResponse {
 	errors := make([]Error, 0)
 
 	assetModel := mapAssetModel(asset)
 
-	externalTokenInfo, err := external.GetTokenInfo(asset.ID, asset.Type)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get external token info: %w", err)
-	}
+	// nolint: errcheck // not stable
+	externalTokenInfo, _ := external.GetTokenInfo(asset.ID, asset.Type)
 
 	checks := []func() error{
 		func() error { return validateAssetInfoID(asset.ID, asset.Type) },
@@ -54,7 +52,7 @@ func (i *Instance) ValidateAssetInfo(asset AssetInfoRequest) (*AssetInfoResponse
 	return &AssetInfoResponse{
 		Status: status,
 		Errors: errors,
-	}, nil
+	}
 }
 
 func mapAssetModel(asset AssetInfoRequest) info.AssetModel {

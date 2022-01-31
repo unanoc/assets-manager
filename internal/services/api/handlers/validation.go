@@ -31,13 +31,7 @@ func (api *ValidationAPI) ValidateAssetInfo(c *gin.Context) {
 		return
 	}
 
-	response, err := api.validator.ValidateAssetInfo(request)
-	if err != nil {
-		log.Error(err)
-		handleResponse(c, err)
-
-		return
-	}
+	response := api.validator.ValidateAssetInfo(request)
 
 	c.JSON(http.StatusOK, response)
 }
@@ -55,7 +49,6 @@ func (api *ValidationAPI) CheckURLStatus(c *gin.Context) {
 
 	resp, err := api.validator.CheckURLStatus(url)
 	if err != nil {
-		log.Error(err)
 		handleResponse(c, err)
 
 		return

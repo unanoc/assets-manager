@@ -1,24 +1,40 @@
 package validation
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
-func (i *Instance) CheckURLStatus(url string) (*URLStatusResponse, error) {
-	if strings.Contains(url, "?") {
-		return nil, fmt.Errorf("forbidden url: url contains query parameters")
+func (i *Instance) CheckURLStatus(websiteURL string) (*URLStatusResponse, error) {
+	if strings.Contains(websiteURL, "?") {
+		return &URLStatusResponse{
+			URL:           websiteURL,
+			StatusCode:    400,
+			StatusMessage: "forbidden url: url contains query parameters",
+		}, nil
 	}
 
-	resp, err := http.Get(url) // nolint:gosec // no need, status code check only
+	resp, err := http.Get(websiteURL) // nolint:gosec // no need, status code check only
 	if err != nil {
-		return nil, fmt.Errorf("failed to make get request to %s: %w", url, err)
+		var err2 *url.Error
+		if errors.As(err, &err2) {
+			return &URLStatusResponse{
+				URL:           websiteURL,
+				StatusCode:    404,
+				StatusMessage: fmt.Sprintf("failed to make get request to %s: %s", websiteURL, err2),
+			}, nil
+		}
+
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	return &URLStatusResponse{
-		URL:        url,
-		StatusCode: resp.StatusCode,
+		URL:           websiteURL,
+		StatusCode:    resp.StatusCode,
+		StatusMessage: resp.Status,
 	}, nil
 }

@@ -34,7 +34,8 @@ type (
 
 type (
 	URLStatusResponse struct {
-		URL        string `json:"url"`
-		StatusCode int    `json:"status_code"`
+		URL           string `json:"url"`
+		StatusCode    int    `json:"status_code"`
+		StatusMessage string `json:"status_message"`
 	}
 )
