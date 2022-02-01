@@ -12,8 +12,10 @@
 7. Select a logo .PNG file
 8. Fill Website field
 9. Fill Description field
-10. Press Check button --> if there is an error, fix it (e.g. image size is wrong)
-11. Press Create Pull Request
+10. Add at least two links
+11. Select at least one tag
+12. Press Check button --> if there is an error, fix it (e.g. image size is wrong)
+13. Press Create Pull Request
  --> progress shown on button
  --> PR is created
 Check the PR in Github, it contains the correct logo.png and info.json files.
@@ -26,6 +28,14 @@ Check the PR in Github, it contains the correct logo.png and info.json files.
 - Browser: Chrome, Firefox, Safari
 - Desktop, mobile platform
 
+Search:
+
+- Search: Go to Search tab, enter a short string (e.g. moon). Several tokens should be listed, with logo & info.
+- Search shortcut: open https://assets.trustwallet.com/search, Search tab should be active
+
+Pull Requests:
+- open https://assets.trustwallet.com/full, select Pull Requests tab, select a PR, check tokens in the PRs
+
 ### Error inputs
 
 - Logo is not a .PNG file (Hint: use a .jpeg file)
@@ -35,4 +45,5 @@ Check the PR in Github, it contains the correct logo.png and info.json files.
 - Contract invalid -- Hint: Use ERC20 contract, remove a few characters
 - ERC20 Contract not checksum -- Hint: change a capital letter to smallercase
 - Website does not start with 'https://'
+- Website is a non-existing site
 - Explorer invalid -- Hint: Change valid etherscan.io url to be invalid
