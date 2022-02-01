@@ -484,7 +484,7 @@ function start() {
         template:
             `
                 <div>
-                    <table class="center">
+                    <table class="left">
                         <tr>
                             <td style="background-color: #E0E0E0;">
                                 <logo-column-preview :logourl="logourl" :logostream="logostream" :tokenname="tokenname" textcolor="black" />
@@ -556,11 +556,11 @@ function start() {
             },
         },
         template: `
-            <div id="token-view">
-                <div class="margined">
-                    <h3>Token View</h3>
-                </div>
-                <table>
+            <div class="col-12 col-lg-7 mt-2">
+                    <h4 class="font-weight-bold">Token preview</h4>
+                    <div class="mt-2 mb-2"><logo-preview :logourl="tokenInfo.logoUrl" :logostream="tokenInfo.logoStream"/></div>
+                    <div class="table-responsive-sm">
+                <table class="table table-borderless">
                     <tr>
                         <td>Type:</td>
                         <td><strong>{{tokenInfo.type}}</strong></td>
@@ -577,13 +577,10 @@ function start() {
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <div>Logo Preview:</div>
-                            <logo-preview :logourl="tokenInfo.logoUrl" :logostream="tokenInfo.logoStream" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <textarea class="input wide" id="info.info" readonly="true" rows="8">{{tokenInfo.infoString}}</textarea>
+                        <div class="form p-0 mt-2 mb-2">
+  <textarea class="form-control" placeholder="" id="info.info" readonly="true" rows="8">{{tokenInfo.infoString}}</textarea>
+                      </div>
+
                         </td>
                     </tr>
                     <tr>
@@ -595,12 +592,10 @@ function start() {
                         <td>Circulation (holders):</td>
                         <td>{{circulationHolders}}</td>
                     </tr>
-                    <tr>
-                        <td colspan="2">
-                            <button class="button" type="button" v-on:click="checkInfoButton">Check</button>
-                        </td>
-                    </tr>
+
+                              </div>
                 </table>
+                    <button class="btn btn-outline-primary" type="button" v-on:click="checkInfoButton">Check</button>
             </div>
         `
     });
@@ -846,11 +841,11 @@ function start() {
         template:
             `
                 <div id="token-search">
-                    <div class="flexrow">
-                        <input id="search-input" class="input wide" placeholder="Token" v-on:change="searchButton" v-model="queryString">
-                        <button v-on:click="searchButton">Search</button>
-                    </div>
-                    <div id="token-search-list" class="selection-list margined">
+                <div class="row align-items-center pb-2">
+                        <div class="d-inline-flex"><input id="search-input" class="form-control m-1" placeholder="Token" v-on:change="searchButton" v-model="queryString">
+                        <button type="submit" class="btn btn-primary m-1" v-on:click="searchButton">Search</button></div>
+                </div>
+                    <div id="token-search-list" class="c">
                         <token-search-item v-for="token in tokens" :token="token" v-on:select="onselecttoken"
                             v-bind:class="{'selected-item': token && selected && token.address == selected.address}"></token-search-item>
                     </div>
@@ -947,12 +942,12 @@ function start() {
             `
                 <tr>
                     <td>Links:</td>
-                    <td>
+                    <td class="d-flex align-items-center">
                         <select class="input" v-model="selectedType">
                             <option v-for="linkType in linkTypes">{{linkType}}</option>
                         </select>
-                        <button class="button" type="button" v-on:click="addLink()">Add Link</button>
-                        <span class="smallfont">Add all that apply</span>
+                        <button class="btn btn-outline-primary btn-sm" type="button" v-on:click="addLink()">Add Link</button>
+                        <span class="smallfont m-2">Add all that apply</span>
                     </td>
                 </tr>
             `
@@ -1001,7 +996,7 @@ function start() {
                 }
                 return t;
             },
-            textToArray: function (text) {
+            textToArray: function(text) {
                 text = text.replace(',', '');
                 let arr = text.split(' ');
                 return arr.filter(t => (t.length > 0)); // filter empty ones
@@ -1367,42 +1362,38 @@ function start() {
         },
         template:
             `
-                <div id="main-add-token" class="flexrow">
+                <div id="main-add-token" class="row mt-3">
                     <div id="add-input">
-                        <div class="margined">
-                            <div class="mainheader">Add New Token</div>
-                            <div id="add-explanation" class="smallfont margined">
-                                <div>
-                                    See guide on
-                                    <a href="https://developer.trustwallet.com/assets/new-asset"
+                        <div class="">
+                            <h4>Add New Token</h4>
+                            <p id="add-explanation" class="smallfont">
+                                    See guide on <a href="https://developer.trustwallet.com/assets/new-asset"
                                         target="_blank">developer</a> and
                                     <a href="https://community.trustwallet.com/t/how-to-submit-a-token-logo/3863"
                                         target="_blank">community</a> sites.
-                                </div>
-                                <div>
+
                                     Fill in the token/project details.
                                     If all is OK, a new
                                     <a href="https://docs.github.com/en/free-pro-team@latest/desktop/contributing-and-collaborating-using-github-desktop/creating-an-issue-or-pull-request"
                                         target="_blank">pull request</a> will be created in your name,
                                     against the <a :href="mainRepoUrl"
                                         target="_blank">assets repo</a>.
-                                </div>
-                            </div>
+                            </p>
                         </div>
                         <div>
                             <div>
                                 <logo-preview :logostream="tokenInput.logoStream" v-show="tokenInput.logoStream"
                                     :tokenname="tokenInput.name.substring(0, 16)" />
                             </div>
-                            <div>
-                                <button class="button"
+                            <div class="mt-3">
+                                <button class="btn btn-outline-primary"
                                     onclick="document.getElementById('input.file-selector').click();">Upload Logo</button>
                                 <input id="input.file-selector" type="file" style="display: none;"
                                     v-on:change="logoFileSelected()" />
                                 <span v-html="inputLogoFilename" v-bind:title="inputLogoDetails" id="input.logo-input" class="smallfont"></span>
                             </div>
                             <div class="smallfont error padded">
-                                {{errorLogo}} 
+                                {{errorLogo}}
                             </div>
                             <table class="wide">
                                 <tr>
@@ -1441,7 +1432,7 @@ function start() {
                                         </div>
                                         <div class="smallfont error padded">
                                             <span v-show="fixedContract"><a v-on:click="tokenInput.contract = fixedContract; tokenInputContractChanged()">Fix</a></span>
-                                            {{errorContract}} 
+                                            {{errorContract}}
                                         </div>
                                     </td>
                                 </tr>
@@ -1474,7 +1465,7 @@ function start() {
                                             v-on:change="tokenInputWebsiteChanged()" />
                                         <div class="smallfont error padded">
                                             <span v-show="fixedWebsite"><a v-on:click="tokenInput.website = fixedWebsite; tokenInputWebsiteChanged()">Fix</a></span>
-                                            {{errorWebsite}} 
+                                            {{errorWebsite}}
                                         </div>
                                     </td>
                                 </tr>
@@ -1486,7 +1477,7 @@ function start() {
                                             size="40" v-on:change="tokenInputExplorerChanged()" />
                                         <div class="smallfont error padded">
                                             <span v-show="fixedExplorer"><a v-on:click="tokenInput.explorerUrl = fixedExplorer; tokenInputExplorerChanged()">Fix</a></span>
-                                            {{errorExplorer}} 
+                                            {{errorExplorer}}
                                         </div>
                                     </td>
                                 </tr>
@@ -1504,15 +1495,15 @@ function start() {
                                 <tags-add :tokenInput="tokenInput" />
                             </table>
 
-                            <div>
-                                <button class="button" type="button"
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-primary m-1" type="button"
                                     v-on:click="checkInputButton()">
                                     {{checkButtonText ? checkButtonText : 'Check'}}
                                 </button>
-                                <button class="button" type="button" v-on:click="createPullButton()">
+                                <button class="btn btn-outline-primary m-1" type="button" v-on:click="createPullButton()">
                                     {{prButtonText ? prButtonText : 'Create Pull Request'}}
                                 </button>
-                                <button class="button" type="button" v-show="debugMode"
+                                <button class="btn btn-outline-primary" type="button" v-show="debugMode"
                                     v-on:click="clearInput()">Clear</button>
                             </div>
                         </div>
@@ -1520,7 +1511,7 @@ function start() {
                     <div v-show="debugMode" id="add-debug-mode">
                         <div>Debug Mode</div>
                         <div>
-                            <button class="button" type="button" v-on:click="debugFillWithDummyData();">Fill
+                            <button class="btn btn-outline-primary" type="button" v-on:click="debugFillWithDummyData();">Fill
                                 test
                                 data</button>
                             <input type="checkbox" id="debug_pr_target_fork_cb" v-model="debugPrTargetFork" /><label
@@ -1591,9 +1582,9 @@ function start() {
         },
         template:
             `
-                <div class="tab-pane flexrow">
-                    <div id="search">
-                        <div class="mainheader">Token Search</div>
+                <div class="row justify-content-center ">
+                    <div id="search" class="col-12 col-lg-5 mt-2">
+                        <h4>Token Search</h4>
                         <token-search v-on:selecttoken="onSearchSelectToken"></token-search>
                     </div>
                     <token-view :token-info="tokenInfo"></token-view>
@@ -1604,12 +1595,14 @@ function start() {
     Vue.component('warning-no-ghuser', {
         template:
             `
-                <div id="placeholder-no-ghuser" class="main center">
-                    <div class="mainheader">Not logged in</div>
-                    <div class="center">
+            <div class="row mt-6">
+                <div class="col-12">
+                    <h3 class="font-weight-bold text-center">Not logged in</h3>
+                    <p class="text-center text-gray-400">
                         You need to log in with your GitHub account, and authorize this application.
-                    </div>
-                </div>            
+                    </p>
+                </div>
+             </div>
             `
     });
 
