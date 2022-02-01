@@ -54,5 +54,5 @@ func (api *ValidationAPI) CheckURLStatus(c *gin.Context) {
 		return
 	}
 
-	c.JSON(resp.StatusCode, resp)
+	c.JSON(200, resp)
 }

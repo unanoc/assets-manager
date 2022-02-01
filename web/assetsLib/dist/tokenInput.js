@@ -147,7 +147,7 @@ function checkTokenInputWebsite(tokenInput, urlChecker) {
         }
         try {
             const result = yield urlChecker.checkUrl(website);
-            if (result == 404) {
+            if (result >= 400 && result <= 499) {
                 return [2, `Website does not exist, status ${result}, url ${website}`, null];
             }
             if (result != 200) {

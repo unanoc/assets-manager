@@ -143,7 +143,7 @@ export async function checkTokenInputWebsite(tokenInput: TokenInput, urlChecker:
     }
     try {
         const result = await urlChecker.checkUrl(website);
-        if (result == 404) {
+        if (result >= 400 && result <= 499) {
             return [2, `Website does not exist, status ${result}, url ${website}`, null];
         }
         if (result != 200) {

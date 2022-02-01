@@ -373,8 +373,18 @@ async function checkUrlByBackend(url) {
     console.log(`checkUrlByBackend ${beUrl}`);
     try {
         let resp = await fetch(beUrl);
-        console.log(resp);
-        return resp.status_code || 500;
+        if (resp.status != 200) {
+            console.log("checkUrlByBackend: could not read BE response", resp.status, resp);
+            return 500;
+        }
+        const respJson = await resp.json();
+        const respCode = respJson['status_code'];
+        if (!respCode) {
+            console.log("checkUrlByBackend: BE response has no status code", respJson);
+            return 500;
+        }
+        console.log(`checkUrlByBackend respCode ${respCode}`);
+        return respCode;
     } catch (error) {
         console.log(error);
         return 500;
