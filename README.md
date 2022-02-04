@@ -26,10 +26,10 @@ make go-build start-api
 
 ### Worker Service
 
-Developing and testing of Worker service is a bit tricky. But here is a guide how you can do this.
+Developing and testing Worker service is a bit tricky. Here is a guide on how you can do this.
 
 **Webhook deliveries**
-Github Bot receives Github events via webhook. But Github can't call you local webhook while you're developing.
+Github Bot receives Github events via webhook. But Github can't call your local webhook while you're developing.
 So we need some tool for forwarding HTTP requests to our local service.
 
 Install [SMEE](https://smee.io/).
@@ -39,7 +39,8 @@ Use CLI
 npm install --global smee-client
 ```
 
-Once you installed SMEE, create a channel on [website](https://smee.io/) and use a chanel's link to launch this in a separate terminal window. For example:
+Once you installed SMEE, create a channel on [website](https://smee.io/) and use a channel's link to launch this in a separate terminal window. 
+For example:
 
 ```sh
 # Use flag -P to forward the request to appropriate API's endpoint
@@ -54,7 +55,7 @@ First of all, you need to create your own [Github App](https://github.com/settin
 - Subscribe to the same events as [Merge-Fee-Bot](https://github.com/organizations/trustwallet/settings/apps/merge-fee-bot).
 - [Install](https://github.com/settings/apps/merge-fee-bot-test/installations) the app to your test repository.
 
-After all, you will need to copy you App ID and generate/download a private key of your app. You should rename you private key file to this name github-private-key.pem (this name is set in .gitignore).
+After all, you will need to copy your `App ID` and generate/download a private key of your app. You should rename your private key file to this name `github-private-key.pem` (this name is set in .gitignore).
 
 Run
 
