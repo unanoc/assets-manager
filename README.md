@@ -29,7 +29,9 @@ make go-build start-api
 Developing and testing Worker service is a bit tricky. Here is a guide on how you can do this.
 
 **Webhook deliveries**
+
 Github Bot receives Github events via webhook. But Github can't call your local webhook while you're developing.
+
 So we need some tool for forwarding HTTP requests to our local service.
 
 Install [SMEE](https://smee.io/).
@@ -40,6 +42,7 @@ npm install --global smee-client
 ```
 
 Once you installed SMEE, create a channel on [website](https://smee.io/) and use a channel's link to launch this in a separate terminal window. 
+
 For example:
 
 ```sh
@@ -48,6 +51,7 @@ smee -P "/v1/github/events/webhook" -u https://smee.io/1yMiWzuRE3hPMeFP
 ```
 
 **Github App**
+
 First of all, you need to create your own [Github App](https://github.com/settings/apps).
 
 - Use your SMEE link to set up a `Webhook URL`.
