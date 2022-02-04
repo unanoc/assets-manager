@@ -5,16 +5,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/trustwallet/assets-manager/internal/services/api/usecases/values"
+	"github.com/trustwallet/assets-manager/internal/services/api/controllers/values"
 )
 
 type ValuesAPI struct {
-	values *values.Instance
+	values *values.Controller
 }
 
 func NewValuesAPI() API {
 	return &ValuesAPI{
-		values: values.New(),
+		values: values.NewController(),
 	}
 }
 

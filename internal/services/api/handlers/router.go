@@ -8,9 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/trustwallet/assets-manager/internal/config"
+	"github.com/trustwallet/go-libs/mq"
 )
 
-func NewRouter() http.Handler {
+func NewRouter(mq *mq.Client) http.Handler {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
@@ -27,7 +28,7 @@ func NewRouter() http.Handler {
 
 	NewValidationAPI().Setup(router)
 	NewValuesAPI().Setup(router)
-	NewGithubAPI().Setup(router)
+	NewGithubAPI(mq).Setup(router)
 
 	return router
 }
@@ -55,5 +56,6 @@ func (api *GithubAPI) Setup(router *gin.Engine) {
 	{
 		v1.GET("/github/oauth", api.RedirectToOauth)
 		v1.GET("/github/oauth/callback", api.HandleOauthCallback)
+		v1.POST("/github/events/webhook", api.HandleEventsWebhook)
 	}
 }

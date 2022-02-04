@@ -4,6 +4,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/trustwallet/assets-manager/internal/config"
+	"github.com/trustwallet/assets-manager/internal/queue"
 	"github.com/trustwallet/go-libs/middleware"
 )
 
@@ -24,5 +25,11 @@ func Setup() {
 		middleware.WithSampleRate(config.Default.Sentry.SampleRate))
 	if err != nil {
 		log.WithError(err).Error("failed to init Sentry")
+	}
+
+	// Init Rabbit MQ queues.
+	err = queue.SetupQueues(config.Default.Rabbitmq.URL)
+	if err != nil {
+		log.WithError(err).Error("failed to init Rabbit MQ queues")
 	}
 }

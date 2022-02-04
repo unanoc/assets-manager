@@ -22,14 +22,12 @@ type Client struct {
 func NewClient() *Client {
 	keyManager, err := keys.NewMnemonicKeyManager(config.Default.Payment.SeedPhrase)
 	if err != nil {
-		// return nil, errors.Wrap(err, "failed to create a mnemonic key manager")
-		log.Error(err, "failed to create a mnemonic key manager")
+		log.WithError(err).Error("failed to create a mnemonic key manager")
 	}
 
 	c, err := client.NewDexClient(config.Default.Clients.Binance.DEX, types.ProdNetwork, keyManager)
 	if err != nil {
-		// return nil, errors.Wrap(err, "failed to create a dex client to binance api")
-		log.Error(err, "failed to create a dex client to binance api")
+		log.WithError(err).Error("failed to create a dex client to binance api")
 	}
 
 	return &Client{

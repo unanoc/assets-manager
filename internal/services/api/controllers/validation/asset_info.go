@@ -10,13 +10,12 @@ import (
 	"github.com/trustwallet/assets-go-libs/validation/info"
 	"github.com/trustwallet/assets-go-libs/validation/info/external"
 	"github.com/trustwallet/assets-manager/internal/config"
-	"github.com/trustwallet/assets-manager/internal/services/api/models"
 	"github.com/trustwallet/go-primitives/address"
 	"github.com/trustwallet/go-primitives/coin"
 	"github.com/trustwallet/go-primitives/types"
 )
 
-func (i *Instance) ValidateAssetInfo(asset AssetInfoRequest) *AssetInfoResponse {
+func (i *Controller) ValidateAssetInfo(asset AssetInfoRequest) *AssetInfoResponse {
 	errors := make([]Error, 0)
 
 	assetModel := mapAssetModel(asset)
@@ -44,9 +43,9 @@ func (i *Instance) ValidateAssetInfo(asset AssetInfoRequest) *AssetInfoResponse 
 		}
 	}
 
-	status := models.StatusTypeOk
+	status := StatusTypeOk
 	if len(errors) > 0 {
-		status = models.StatusTypeError
+		status = StatusTypeError
 	}
 
 	return &AssetInfoResponse{

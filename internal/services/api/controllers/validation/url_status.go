@@ -8,11 +8,11 @@ import (
 	"strings"
 )
 
-func (i *Instance) CheckURLStatus(websiteURL string) (*URLStatusResponse, error) {
+func (i *Controller) CheckURLStatus(websiteURL string) (*URLStatusResponse, error) {
 	if strings.Contains(websiteURL, "?") {
 		return &URLStatusResponse{
 			URL:           websiteURL,
-			StatusCode:    400,
+			StatusCode:    http.StatusBadRequest,
 			StatusMessage: "forbidden url: url contains query parameters",
 		}, nil
 	}
@@ -23,7 +23,7 @@ func (i *Instance) CheckURLStatus(websiteURL string) (*URLStatusResponse, error)
 		if errors.As(err, &err2) {
 			return &URLStatusResponse{
 				URL:           websiteURL,
-				StatusCode:    404,
+				StatusCode:    http.StatusNotFound,
 				StatusMessage: fmt.Sprintf("failed to make get request to %s: %s", websiteURL, err2),
 			}, nil
 		}

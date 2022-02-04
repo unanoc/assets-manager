@@ -4,7 +4,7 @@ import (
 	"github.com/trustwallet/assets-manager/internal/config"
 )
 
-func (i *Instance) GetTagValues() *TagValuesResponse {
+func (i *Controller) GetTagValues() *TagValuesResponse {
 	cfgTags := config.Default.Tags
 
 	tags := make([]Tag, len(cfgTags))

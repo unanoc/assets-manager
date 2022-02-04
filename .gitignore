@@ -17,3 +17,4 @@
 # Other dirs and files
 bin/
 coverage.txt
+github-private-key.pem

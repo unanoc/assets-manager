@@ -1,6 +1,11 @@
 package validation
 
-import "github.com/trustwallet/assets-manager/internal/services/api/models"
+type StatusType string
+
+const (
+	StatusTypeOk    StatusType = "ok"
+	StatusTypeError StatusType = "error"
+)
 
 type (
 	AssetInfoRequest struct {
@@ -23,8 +28,8 @@ type (
 	}
 
 	AssetInfoResponse struct {
-		Status models.StatusType `json:"status"`
-		Errors []Error           `json:"errors"`
+		Status StatusType `json:"status"`
+		Errors []Error    `json:"errors"`
 	}
 
 	Error struct {

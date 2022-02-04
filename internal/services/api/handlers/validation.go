@@ -7,16 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/trustwallet/assets-manager/internal/services/api/usecases/validation"
+	"github.com/trustwallet/assets-manager/internal/services/api/controllers/validation"
 )
 
 type ValidationAPI struct {
-	validator *validation.Instance
+	validator *validation.Controller
 }
 
 func NewValidationAPI() API {
 	return &ValidationAPI{
-		validator: validation.New(),
+		validator: validation.NewController(),
 	}
 }
 
@@ -49,7 +49,7 @@ func (api *ValidationAPI) CheckURLStatus(c *gin.Context) {
 
 	resp, err := api.validator.CheckURLStatus(url)
 	if err != nil {
-		handleResponse(c, err)
+		abortWithStatusJSON(c, http.StatusInternalServerError)
 
 		return
 	}

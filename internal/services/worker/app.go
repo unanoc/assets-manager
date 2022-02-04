@@ -9,22 +9,22 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	assetsmanager "github.com/trustwallet/assets-go-libs/client/assets-manager"
 	"github.com/trustwallet/assets-manager/internal/config"
-	"github.com/trustwallet/assets-manager/internal/http"
+	"github.com/trustwallet/assets-manager/internal/queue"
 	"github.com/trustwallet/assets-manager/internal/services"
 	"github.com/trustwallet/assets-manager/internal/services/worker/blockchain"
 	"github.com/trustwallet/assets-manager/internal/services/worker/events"
 	"github.com/trustwallet/assets-manager/internal/services/worker/github"
-	"github.com/trustwallet/assets-manager/internal/services/worker/handlers"
 	"github.com/trustwallet/assets-manager/internal/services/worker/metrics"
-	assetsmanager "github.com/trustwallet/go-libs/client/api/assets-manager"
+	"github.com/trustwallet/go-libs/mq"
 	"github.com/trustwallet/go-libs/worker"
 )
 
 type App struct {
-	metrics      *metrics.Prometheus
-	eventHandler *events.EventHandler
-	server       *http.Server
+	mqClient      *mq.Client
+	eventHandler  *events.Handler
+	metricsPusher worker.Worker
 }
 
 func NewApp() *App {
@@ -32,21 +32,29 @@ func NewApp() *App {
 
 	githubClient, err := github.NewClient()
 	if err != nil {
-		log.Fatalf("failed to create github instance: %v", err)
+		log.WithError(err).Fatal("failed to create github instance")
+	}
+
+	mqClient, err := mq.Connect(config.Default.Rabbitmq.URL)
+	if err != nil {
+		log.WithError(err).Fatal("failed to init RabbitMQ")
+	}
+
+	metricsPusher, err := metrics.InitMetricsPusher(config.Default.PushGateway.URL,
+		config.Default.PushGateway.PushInterval)
+	if err != nil {
+		log.WithError(err).Error("failed to init metrics pusher")
 	}
 
 	assetsManagerClient := assetsmanager.InitClient(config.Default.Clients.AssetsManager.API, nil)
 	blockchainClient := blockchain.NewClient()
 	prometheus := metrics.NewPrometheus()
-	eventHandler := events.NewEventHandler(prometheus, githubClient, blockchainClient, &assetsManagerClient)
-
-	router := handlers.NewRouter(eventHandler)
-	server := http.NewHTTPServer(router)
+	eventHandler := events.NewHandler(prometheus, githubClient, blockchainClient, &assetsManagerClient)
 
 	return &App{
-		metrics:      prometheus,
-		eventHandler: eventHandler,
-		server:       server,
+		mqClient:      mqClient,
+		eventHandler:  eventHandler,
+		metricsPusher: metricsPusher,
 	}
 }
 
@@ -54,26 +62,45 @@ func (a *App) Run(ctx context.Context) {
 	ctx, cancel := context.WithCancel(ctx)
 	wg := &sync.WaitGroup{}
 
-	checkFunc := func() {
-		err := a.eventHandler.CheckOpenPullRequests(ctx, config.Default.Github.RepoOwner,
-			config.Default.Github.RepoName, nil, false)
-		if err != nil {
-			log.Error(err)
-		}
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	a.mqClient.ListenConnectionAsync(ctx, wg)
+	runBackgroundChecker(ctx, wg, a.eventHandler)
+
+	err := a.mqClient.StartConsumers(ctx, initConsumers(ctx, a.mqClient, a.eventHandler)...)
+	if err != nil {
+		log.WithError(err).Fatal("failed to start Rabbit MQ consumers")
 	}
 
-	checker := worker.New("PR checker", checkFunc, config.Default.Timeout.BackgroundCheck, false)
-	checker.StartWithTicker(ctx, wg)
-
-	done := make(chan os.Signal, 1)
-	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-
-	a.server.Run()
-	<-done
-	if err := a.server.Shutdown(ctx); err != nil {
-		log.Fatalf("failed to shutdown http server: %v", err)
+	if a.metricsPusher != nil {
+		a.metricsPusher.Start(ctx, wg)
 	}
+
+	<-stop
 
 	cancel()
 	wg.Wait()
+}
+
+func runBackgroundChecker(ctx context.Context, wg *sync.WaitGroup, eh *events.Handler) {
+	repoOwner := config.Default.Github.RepoOwner
+	repoName := config.Default.Github.RepoName
+
+	workerOpts := worker.DefaultWorkerOptions(config.Default.Timeout.BackgroundCheck)
+	workerFn := func() error {
+		return eh.CheckOpenPullRequests(ctx, repoOwner, repoName, nil)
+	}
+
+	worker.InitWorker("PR checker", workerOpts, workerFn).Start(ctx, wg)
+}
+
+func initConsumers(ctx context.Context, mqClient *mq.Client, eh *events.Handler) []mq.Consumer {
+	options := mq.DefaultConsumerOptions(config.Default.Consumer.Workers)
+
+	consumers := []mq.Consumer{
+		mqClient.InitConsumer(queue.QueueAssetManagerProcessGithubEvent, options, events.GetEventConsumer(ctx, eh)),
+	}
+
+	return consumers
 }

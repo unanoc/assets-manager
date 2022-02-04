@@ -17,6 +17,19 @@ type Configuration struct {
 		SampleRate float32 `mapstructure:"sample_rate"`
 	} `mapstructure:"sentry"`
 
+	Rabbitmq struct {
+		URL string `mapstructure:"url"`
+	} `mapstructure:"rabbitmq"`
+
+	Consumer struct {
+		Workers int `mapstructure:"workers"`
+	} `mapstructure:"consumer"`
+
+	PushGateway struct {
+		URL          string        `mapstructure:"url"`
+		PushInterval time.Duration `mapstructure:"push_interval"`
+	} `mapstructure:"pushgateway"`
+
 	Clients struct {
 		Binance struct {
 			DEX      string `mapstructure:"dex"`
@@ -70,11 +83,11 @@ type Configuration struct {
 		Paid      string `mapstructure:"paid"`
 	} `mapstructure:"label"`
 
-	User struct {
+	UserAccess struct {
 		DeleteCommentsFromExternal bool   `mapstructure:"delete_comments_from_external"`
 		Collaborators              string `mapstructure:"collaborators"`
 		Moderators                 string `mapstructure:"moderators"`
-	} `mapstructure:"user"`
+	} `mapstructure:"user_access"`
 
 	Timeout struct {
 		MaxAgeClose     time.Duration `mapstructure:"max_age_close"`
@@ -83,7 +96,7 @@ type Configuration struct {
 	} `mapstructure:"timeout"`
 
 	Limitation struct {
-		PrFilesNumAllowed int `mapstructure:"pr_files_num_allowed"`
+		PrFilesNumMax int `mapstructure:"pr_files_num_max"`
 	} `mapstructure:"limitation"`
 
 	Validation struct {

@@ -1,11 +1,21 @@
 service_name: ""
 log_level: "debug"
 
-port: 4444
+port: 3000
 
 sentry:
   dsn: ""
   sample_rate: 1
+
+rabbitmq:
+  url: amqp://localhost:5672
+
+consumer:
+  workers: 1
+
+pushgateway:
+  url: http://localhost:9091
+  push_interval: 30s
 
 clients:
   binance:
@@ -76,9 +86,9 @@ label:
   requested: "Payment Status: Requested"
   paid: "Payment Status: Paid"
 
-user:
+user_access:
   delete_comments_from_external: true
-  collaborators: "zachzwei,Iamdeadlyz,catenocrypt,vikmeup,hewigovens,Cryptocool1,cryptomanz,leedaniil,ramsty,bjt54"
+  collaborators: "zachzwei,Iamdeadlyz,catenocrypt,vikmeup,hewigovens,Cryptocool1,cryptomanz,ramsty,bjt54"
   moderators: "Iamdeadlyz,Cryptocool1,cryptomanz"
 
 timeout:
@@ -87,7 +97,7 @@ timeout:
   background_check: 1m
 
 limitation:
-  pr_files_num_allowed: 10
+  pr_files_num_max: 10
 
 validation:
   asset:

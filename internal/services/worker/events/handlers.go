@@ -10,6 +10,7 @@ import (
 	gh "github.com/google/go-github/v38/github"
 	log "github.com/sirupsen/logrus"
 
+	assetsmanager "github.com/trustwallet/assets-go-libs/client/assets-manager"
 	"github.com/trustwallet/assets-go-libs/http"
 	"github.com/trustwallet/assets-go-libs/image"
 	"github.com/trustwallet/assets-go-libs/path"
@@ -18,21 +19,20 @@ import (
 	"github.com/trustwallet/assets-manager/internal/services/worker/blockchain"
 	"github.com/trustwallet/assets-manager/internal/services/worker/github"
 	"github.com/trustwallet/assets-manager/internal/services/worker/metrics"
-	assetsmanager "github.com/trustwallet/go-libs/client/api/assets-manager"
 	"github.com/trustwallet/go-primitives/coin"
 	"github.com/trustwallet/go-primitives/types"
 )
 
-type EventHandler struct {
+type Handler struct {
 	metrics       *metrics.Prometheus
 	github        *github.Client
 	blockchain    *blockchain.Client
 	assetsManager *assetsmanager.Client
 }
 
-func NewEventHandler(metricsClient *metrics.Prometheus, githubClient *github.Client,
-	blockchainClient *blockchain.Client, assetsManager *assetsmanager.Client) *EventHandler {
-	return &EventHandler{
+func NewHandler(metricsClient *metrics.Prometheus, githubClient *github.Client,
+	blockchainClient *blockchain.Client, assetsManager *assetsmanager.Client) *Handler {
+	return &Handler{
 		metrics:       metricsClient,
 		github:        githubClient,
 		blockchain:    blockchainClient,
@@ -40,7 +40,7 @@ func NewEventHandler(metricsClient *metrics.Prometheus, githubClient *github.Cli
 	}
 }
 
-func (e EventHandler) HandlePullRequestOpened(ctx context.Context, event *gh.PullRequestEvent) error {
+func (e Handler) HandlePullRequestOpened(ctx context.Context, event *gh.PullRequestEvent) error {
 	e.metrics.IncCounterPullRequestsCreated()
 
 	owner := event.GetRepo().GetOwner().GetLogin()
@@ -73,7 +73,7 @@ func (e EventHandler) HandlePullRequestOpened(ctx context.Context, event *gh.Pul
 	return e.github.CreateCommentOnPullRequest(ctx, owner, repo, commentText, prNum)
 }
 
-func (e EventHandler) HandleIssueCommentCreated(ctx context.Context, event *gh.IssueCommentEvent) error {
+func (e Handler) HandleIssueCommentCreated(ctx context.Context, event *gh.IssueCommentEvent) error {
 	if !event.GetIssue().IsPullRequest() {
 		return nil
 	}
@@ -101,11 +101,6 @@ func (e EventHandler) HandleIssueCommentCreated(ctx context.Context, event *gh.I
 	}
 
 	debugCheck := strings.Contains(commentBody, "/check")
-	debugCheckAll := strings.Contains(commentBody, "/checkall")
-
-	if debugCheckAll {
-		return e.CheckOpenPullRequests(ctx, owner, repo, pr, debugCheck)
-	}
 
 	err = e.deleteCommentIfNeeded(ctx, owner, repo, prCreator, commentCreator, commentID)
 	if err != nil {
@@ -115,7 +110,7 @@ func (e EventHandler) HandleIssueCommentCreated(ctx context.Context, event *gh.I
 	return e.checkPullStatus(ctx, owner, repo, pr, debugCheck)
 }
 
-func (e EventHandler) HandlePullRequestReviewCommentCreated(ctx context.Context,
+func (e Handler) HandlePullRequestReviewCommentCreated(ctx context.Context,
 	event *gh.PullRequestReviewCommentEvent,
 ) error {
 	owner := event.GetRepo().GetOwner().GetLogin()
@@ -136,10 +131,10 @@ func (e EventHandler) HandlePullRequestReviewCommentCreated(ctx context.Context,
 	return e.checkPullStatus(ctx, owner, repo, pr, false)
 }
 
-func (e EventHandler) deleteCommentIfNeeded(ctx context.Context, owner, repo, prCreator,
+func (e Handler) deleteCommentIfNeeded(ctx context.Context, owner, repo, prCreator,
 	user string, commentID int64,
 ) error {
-	if !config.Default.User.DeleteCommentsFromExternal {
+	if !config.Default.UserAccess.DeleteCommentsFromExternal {
 		return nil
 	}
 
@@ -150,18 +145,18 @@ func (e EventHandler) deleteCommentIfNeeded(ctx context.Context, owner, repo, pr
 	return e.github.DeleteCommentInIssue(ctx, owner, repo, commentID)
 }
 
-func (e EventHandler) isUserCollaboratorOrCreator(creator, user string) bool {
+func (e Handler) isUserCollaboratorOrCreator(creator, user string) bool {
 	isBot := strings.HasPrefix(user, config.Default.ServiceName)
 	isCreator := user == creator
 
 	return isBot || isCreator || e.isCollaborator(user)
 }
 
-func (e EventHandler) isCollaborator(user string) bool {
+func (e Handler) isCollaborator(user string) bool {
 	isCollaborator := false
 
-	if config.Default.User.Collaborators != "" {
-		collaborators := strings.Split(config.Default.User.Collaborators, ",")
+	if config.Default.UserAccess.Collaborators != "" {
+		collaborators := strings.Split(config.Default.UserAccess.Collaborators, ",")
 		for _, collaborator := range collaborators {
 			if user == collaborator {
 				isCollaborator = true
@@ -172,7 +167,7 @@ func (e EventHandler) isCollaborator(user string) bool {
 	return isCollaborator
 }
 
-func (e EventHandler) checkPullStatus(ctx context.Context, owner, repo string, pr *gh.PullRequest, debug bool) error {
+func (e Handler) checkPullStatus(ctx context.Context, owner, repo string, pr *gh.PullRequest, debug bool) error {
 	if e.isCollaborator(pr.GetUser().GetLogin()) {
 		return nil
 	}
@@ -230,14 +225,14 @@ func (e EventHandler) checkPullStatus(ctx context.Context, owner, repo string, p
 	return nil
 }
 
-func (e EventHandler) approvePullRequest(ctx context.Context, owner, repo string,
+func (e Handler) approvePullRequest(ctx context.Context, owner, repo string,
 	pr *gh.PullRequest, ps *blockchain.PaymentStatus,
 ) error {
 	text := substituteDynamicContent(config.Default.Message.Received, &contentParams{
 		PaidAmount:       ps.Amount,
 		PaidSymbol:       strings.Split(ps.Token, "-")[0],
 		PaidExplorerLink: ps.Transactions[0].ExplorerLink,
-		Moderators:       config.Default.User.Moderators,
+		Moderators:       config.Default.UserAccess.Moderators,
 	})
 
 	if _, err := e.github.CreateReview(ctx, owner, repo, text, "APPROVE", pr.GetNumber()); err != nil {
@@ -250,7 +245,7 @@ func (e EventHandler) approvePullRequest(ctx context.Context, owner, repo string
 		return err
 	}
 
-	assignedUsers := strings.Split(config.Default.User.Moderators, ",")
+	assignedUsers := strings.Split(config.Default.UserAccess.Moderators, ",")
 	if _, err := e.github.AddAssignees(ctx, owner, repo, pr.GetNumber(), assignedUsers); err != nil {
 		return err
 	}
@@ -271,7 +266,7 @@ func (e EventHandler) approvePullRequest(ctx context.Context, owner, repo string
 	return e.github.CreateCommentOnPullRequest(ctx, owner, repo, text, pr.GetNumber())
 }
 
-func (e EventHandler) closePullRequest(ctx context.Context, owner, repo string, pr *gh.PullRequest) error {
+func (e Handler) closePullRequest(ctx context.Context, owner, repo string, pr *gh.PullRequest) error {
 	text := substituteDynamicContent(config.Default.Message.ClosingOldPR, nil)
 	if err := e.github.CreateCommentOnPullRequest(ctx, owner, repo, text, pr.GetNumber()); err != nil {
 		return err
@@ -280,14 +275,14 @@ func (e EventHandler) closePullRequest(ctx context.Context, owner, repo string, 
 	return e.github.ClosePullRequest(ctx, owner, repo, pr.GetNumber())
 }
 
-func (e EventHandler) remindToPay(ctx context.Context, owner, repo string, pr *gh.PullRequest) error {
+func (e Handler) remindToPay(ctx context.Context, owner, repo string, pr *gh.PullRequest) error {
 	pp := getPaymentParams(pr)
 	text := substituteDynamicContent(config.Default.Message.Reminder, &contentParams{PP: pp})
 
 	return e.github.CreateCommentOnPullRequest(ctx, owner, repo, text, pr.GetNumber())
 }
 
-func (e EventHandler) hasReviewAlready(ctx context.Context, owner, repo string, pr *gh.PullRequest) bool {
+func (e Handler) hasReviewAlready(ctx context.Context, owner, repo string, pr *gh.PullRequest) bool {
 	list, err := e.github.GetPullRequestReviewList(ctx, owner, repo, pr.GetNumber())
 	if err != nil {
 		return false
@@ -304,7 +299,7 @@ func (e EventHandler) hasReviewAlready(ctx context.Context, owner, repo string, 
 	return false
 }
 
-func (e EventHandler) hasLabelAlready(ctx context.Context, owner, repo string, pr *gh.PullRequest) bool {
+func (e Handler) hasLabelAlready(ctx context.Context, owner, repo string, pr *gh.PullRequest) bool {
 	labels, err := e.github.GetIssueListLabels(ctx, owner, repo, pr.GetNumber())
 	if err != nil {
 		return false
@@ -319,7 +314,7 @@ func (e EventHandler) hasLabelAlready(ctx context.Context, owner, repo string, p
 	return false
 }
 
-func (e EventHandler) checkPaymentForPullRequest(pr *gh.PullRequest) (*blockchain.PaymentStatus, error) {
+func (e Handler) checkPaymentForPullRequest(pr *gh.PullRequest) (*blockchain.PaymentStatus, error) {
 	params := getPaymentParams(pr)
 
 	for _, p := range params.Payments {
@@ -339,9 +334,7 @@ func (e EventHandler) checkPaymentForPullRequest(pr *gh.PullRequest) (*blockchai
 	return &blockchain.PaymentStatus{}, nil
 }
 
-func (e EventHandler) CheckOpenPullRequests(
-	ctx context.Context, owner, repo string, pr *gh.PullRequest, debug bool,
-) error {
+func (e Handler) CheckOpenPullRequests(ctx context.Context, owner, repo string, pr *gh.PullRequest) error {
 	prs, err := e.github.GetPullRequestsList(ctx, owner, repo, "open", 100)
 	if err != nil {
 		return fmt.Errorf("failed to get open pull requests: %w", err)
@@ -364,7 +357,7 @@ func (e EventHandler) CheckOpenPullRequests(
 
 	prCountToPay := 0
 	for _, p := range prs {
-		err := e.checkPullStatus(ctx, owner, repo, p, debug)
+		err := e.checkPullStatus(ctx, owner, repo, p, false)
 		if err != nil {
 			return err
 		}
@@ -377,7 +370,7 @@ func (e EventHandler) CheckOpenPullRequests(
 	return nil
 }
 
-func (e EventHandler) HandlePullRequestChangesPushed(ctx context.Context, event *gh.PullRequestEvent) error {
+func (e Handler) HandlePullRequestChangesPushed(ctx context.Context, event *gh.PullRequestEvent) error {
 	owner := event.GetRepo().GetOwner().GetLogin()
 	repo := event.GetRepo().GetName()
 	pr := event.GetPullRequest()
@@ -411,10 +404,10 @@ func (e EventHandler) HandlePullRequestChangesPushed(ctx context.Context, event 
 }
 
 // nolint: gosec
-func (e EventHandler) getFilesCheckSummary(files []*gh.CommitFile, repoOwner, repoName, branch string) string {
+func (e Handler) getFilesCheckSummary(files []*gh.CommitFile, repoOwner, repoName, branch string) string {
 	text := "**PR Summary**\n"
 
-	checkSummary := e.checkPullRequestFiles(files, config.Default.Limitation.PrFilesNumAllowed, repoOwner)
+	checkSummary := e.checkPullRequestFiles(files, config.Default.Limitation.PrFilesNumMax, repoOwner)
 	if checkSummary != "" {
 		return fmt.Sprintf("%s%s", text, checkSummary)
 	}
@@ -460,7 +453,7 @@ func (e EventHandler) getFilesCheckSummary(files []*gh.CommitFile, repoOwner, re
 	return text
 }
 
-func (e EventHandler) checkPullRequestFiles(files []*gh.CommitFile, limit int, repoOwner string) string {
+func (e Handler) checkPullRequestFiles(files []*gh.CommitFile, limit int, repoOwner string) string {
 	if len(files) == 0 {
 		return "No changed files found."
 	}
@@ -485,7 +478,7 @@ func (e EventHandler) checkPullRequestFiles(files []*gh.CommitFile, limit int, r
 	return msg
 }
 
-func (e EventHandler) checkToken(tokenID, tokenType, repoOwner, repoName, branch string) string {
+func (e Handler) checkToken(tokenID, tokenType, repoOwner, repoName, branch string) string {
 	chain, err := types.GetChainFromAssetType(tokenType)
 	if err != nil {
 		return "failed to get chain from asset type"
@@ -553,7 +546,7 @@ func (e EventHandler) checkToken(tokenID, tokenType, repoOwner, repoName, branch
 	return text
 }
 
-func (e EventHandler) checkAssetInfo(tokenInfo *assetsmanager.AssetValidationReq) string {
+func (e Handler) checkAssetInfo(tokenInfo *assetsmanager.AssetValidationReq) string {
 	result, err := e.assetsManager.ValidateAssetInfo(tokenInfo)
 	if err != nil {
 		log.Debugf(err.Error())
@@ -573,7 +566,7 @@ func (e EventHandler) checkAssetInfo(tokenInfo *assetsmanager.AssetValidationReq
 	return text
 }
 
-func (e EventHandler) checkLogo(url string) string {
+func (e Handler) checkLogo(url string) string {
 	data, err := http.GetHTTPResponseBytes(url)
 	if err != nil {
 		return fmt.Sprintf("failed to get logo: %s\n", err.Error())
