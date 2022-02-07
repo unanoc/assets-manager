@@ -176,8 +176,7 @@ func (e Handler) checkPullStatus(ctx context.Context, owner, repo string, pr *gh
 		return nil
 	}
 
-	isExpectingPayment := !(e.hasReviewAlready(ctx, owner, repo, pr) || e.hasLabelAlready(ctx, owner, repo, pr))
-	if !isExpectingPayment {
+	if !e.isPaymentExpected(ctx, owner, repo, pr) {
 		if debug {
 			text := substituteDynamicContent(config.Default.Message.Reviewed, nil)
 
@@ -201,11 +200,6 @@ func (e Handler) checkPullStatus(ctx context.Context, owner, repo string, pr *gh
 	prUpdateAgeHours := now.Sub(pr.GetUpdatedAt())
 	halfHour := time.Duration(30) * time.Minute
 
-	log.WithFields(log.Fields{
-		"pr_age_hrs":    prAgeHours,
-		"pr_update_hrs": prUpdateAgeHours,
-	}).Debugf("Pull request #%d", pr.GetNumber())
-
 	// Check for too old -> close pr.
 	if prAgeHours >= config.Default.Timeout.MaxAgeClose && prUpdateAgeHours > halfHour {
 		return e.closePullRequest(ctx, owner, repo, pr)
@@ -223,6 +217,10 @@ func (e Handler) checkPullStatus(ctx context.Context, owner, repo string, pr *gh
 	}
 
 	return nil
+}
+
+func (e Handler) isPaymentExpected(ctx context.Context, owner, repo string, pr *gh.PullRequest) bool {
+	return !(e.hasReviewAlready(ctx, owner, repo, pr) || e.hasLabelAlready(ctx, owner, repo, pr))
 }
 
 func (e Handler) approvePullRequest(ctx context.Context, owner, repo string,
@@ -349,7 +347,7 @@ func (e Handler) CheckOpenPullRequests(ctx context.Context, owner, repo string, 
 		}
 	}
 
-	if !triggeredPrIncluded {
+	if triggeredPrIncluded {
 		prs = append(prs, pr)
 	}
 
@@ -362,7 +360,9 @@ func (e Handler) CheckOpenPullRequests(ctx context.Context, owner, repo string, 
 			return err
 		}
 
-		prCountToPay++
+		if e.isPaymentExpected(ctx, owner, repo, pr) {
+			prCountToPay++
+		}
 	}
 
 	e.metrics.SetPullRequestsToPay(prCountToPay)

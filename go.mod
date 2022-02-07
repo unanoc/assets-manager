@@ -9,6 +9,7 @@ require (
 	github.com/binance-chain/go-sdk v1.2.6
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/google/go-github/v38 v38.1.0
+	github.com/penglongli/gin-metrics v0.1.9
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.12.0
 	github.com/sirupsen/logrus v1.8.1
@@ -39,6 +40,7 @@ require (
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/streadway/amqp v1.0.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
+	github.com/willf/bitset v1.1.11 // indirect
 	github.com/zondax/hid v0.9.0 // indirect
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
 )
