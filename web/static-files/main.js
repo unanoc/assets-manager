@@ -391,6 +391,16 @@ async function checkUrlByBackend(url) {
     }
 }
 
+// throws
+async function retrieveTagValues() {
+    const resp = await fetch(`${assetsAPI}/v1/values/tags`);
+    if (resp.status != 200) {
+        throw `Could not retrieve, status ${resp.status}`;
+    }
+    const respJson = await resp.json();
+    return respJson;
+}
+
 function start() {
     // Preview for a single logo, supports url and stream, rounded mask, dimming
     Vue.component('logo-single-preview', {
@@ -961,11 +971,25 @@ function start() {
             return {
                 tagsText: '',
                 selectedTag: '', // tag selected in the dropdown
+                tagValues: [], // possible tag values
             }
         },
         async created() {
             this.tagsText = this.arrayToText(this.tokenInput.tags);
             this.selectedTag = '';
+            // default
+            this.tagValues = [];
+            try {
+                const respVals = await retrieveTagValues();
+                if (respVals.tags && respVals.tags.length > 0) {
+                    this.tagValues = respVals.tags;
+                    console.log(`Retrieve tag values, ${this.tagValues.length}`);
+                } else {
+                    console.log('Error: Could not retrieve tag values,', respVals);
+                }
+            } catch (error) {
+                console.log('Error: Could not retrieve tag values,', error);
+            }
         },
         methods: {
             updateFromText: function () {
@@ -1000,7 +1024,7 @@ function start() {
                 text = text.replace(',', '');
                 let arr = text.split(' ');
                 return arr.filter(t => (t.length > 0)); // filter empty ones
-            }
+            },
         },
         template:
             `
@@ -1009,7 +1033,7 @@ function start() {
                     <td>
                         <select class="input" v-model="selectedTag" v-on:click="toggleTag()">
                             <option value="">(add/remove a tag by selecting from the list)</option>
-                            <option v-for="tag in script.assets.TagValues" :value="tag.id">{{tag.id}} <!-- {{tag.description}} --></option>
+                            <option v-for="tag in this.tagValues" :value="tag.id">{{tag.id}} <!-- {{tag.description}} --></option>
                         </select>
                         <input v-model="tagsText" class="input" v-on:change="updateFromText()" placeholder="Select at least one tag" />
                     </td>
