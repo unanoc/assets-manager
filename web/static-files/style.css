@@ -29,6 +29,18 @@ a:hover {
   background-color: #0B65C6 !important;
 }
 
+.nav-link.active {
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  color: #74acff !important;
+}
+
+.nav-link {
+  color: white !important;
+}
+
 #loading {
   padding: 100px 0 1000px 0;
 }
@@ -115,10 +127,6 @@ textarea {
 }
 .selected-item {
   background-color: #e0e6ee;
-}
-.tab-select {
-  padding: 8px;
-  border-radius: 7px 7px 0px 0px;
 }
 .pull-label-small {
   margin: 2px;
