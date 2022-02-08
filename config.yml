@@ -13,8 +13,9 @@ rabbitmq:
 consumer:
   workers: 1
 
-pushgateway:
-  url: http://localhost:9091
+metrics:
+  path: metrics
+  pushgateway_url: http://localhost:9091
   push_interval: 30s
 
 clients:

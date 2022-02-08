@@ -25,10 +25,11 @@ type Configuration struct {
 		Workers int `mapstructure:"workers"`
 	} `mapstructure:"consumer"`
 
-	PushGateway struct {
-		URL          string        `mapstructure:"url"`
-		PushInterval time.Duration `mapstructure:"push_interval"`
-	} `mapstructure:"pushgateway"`
+	Metrics struct {
+		Path           string        `mapstructure:"path"`
+		PushGatewayURL string        `mapstructure:"pushgateway_url"`
+		PushInterval   time.Duration `mapstructure:"push_interval"`
+	} `mapstructure:"metrics"`
 
 	Clients struct {
 		Binance struct {

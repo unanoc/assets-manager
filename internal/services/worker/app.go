@@ -7,6 +7,7 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
 
 	assetsmanager "github.com/trustwallet/assets-go-libs/client/assets-manager"
@@ -17,6 +18,7 @@ import (
 	"github.com/trustwallet/assets-manager/internal/services/worker/events"
 	"github.com/trustwallet/assets-manager/internal/services/worker/github"
 	"github.com/trustwallet/assets-manager/internal/services/worker/metrics"
+	metricsLib "github.com/trustwallet/go-libs/metrics"
 	"github.com/trustwallet/go-libs/mq"
 	"github.com/trustwallet/go-libs/worker"
 )
@@ -40,8 +42,8 @@ func NewApp() *App {
 		log.WithError(err).Fatal("failed to init RabbitMQ")
 	}
 
-	metricsPusher, err := metrics.InitMetricsPusher(config.Default.PushGateway.URL,
-		config.Default.PushGateway.PushInterval)
+	metricsPusher, err := metrics.InitMetricsPusher(config.Default.Metrics.PushGatewayURL,
+		config.Default.Metrics.PushInterval)
 	if err != nil {
 		log.WithError(err).Error("failed to init metrics pusher")
 	}
@@ -97,6 +99,12 @@ func runBackgroundChecker(ctx context.Context, wg *sync.WaitGroup, eh *events.Ha
 
 func initConsumers(ctx context.Context, mqClient *mq.Client, eh *events.Handler) []mq.Consumer {
 	options := mq.DefaultConsumerOptions(config.Default.Consumer.Workers)
+
+	options.PerformanceMetric = metricsLib.NewPerformanceMetric(
+		"assets_manager_worker",
+		prometheus.Labels{"queue_name": string(queue.QueueAssetManagerProcessGithubEvent)},
+		prometheus.DefaultRegisterer,
+	)
 
 	consumers := []mq.Consumer{
 		mqClient.InitConsumer(queue.QueueAssetManagerProcessGithubEvent, options, events.GetEventConsumer(ctx, eh)),
