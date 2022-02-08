@@ -12,6 +12,10 @@ type Configuration struct {
 	LogLevel    string `mapstructure:"log_level"`
 	Port        int    `mapstructure:"port"`
 
+	Gin struct {
+		Mode string `mapstructure:"mode"`
+	} `mapstructure:"gin"`
+
 	Sentry struct {
 		DSN        string  `mapstructure:"dsn"`
 		SampleRate float32 `mapstructure:"sample_rate"`

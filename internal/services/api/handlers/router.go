@@ -5,11 +5,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/trustwallet/assets-manager/internal/config"
+	"github.com/trustwallet/go-libs/middleware"
 	"github.com/trustwallet/go-libs/mq"
 )
 
 func NewRouter(mq *mq.Client) http.Handler {
-	router := gin.Default()
+	var router *gin.Engine
+
+	if config.Default.Gin.Mode == gin.DebugMode {
+		router = gin.Default()
+	} else {
+		router = gin.New()
+		router.Use(middleware.Logger())
+	}
 
 	// middlewares
 	SetupMiddlewares(router)
