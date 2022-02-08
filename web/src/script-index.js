@@ -24,3 +24,9 @@ Vue.use(IconsPlugin)
 UIkit.use(Icons);
 // components can be called from the imported UIkit reference
 //UIkit.notification('Hello world.');
+
+// List config variables here (placeholder is replaced during webpacking, see .env)
+export const config = {
+    api_assets_url: CONFIG_API_ASSETS_URL,
+    api_tw_url: CONFIG_API_TW_URL,
+};

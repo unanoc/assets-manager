@@ -94,7 +94,7 @@ exports.TokenInput = TokenInput;
 // - result: 0 for all OK, 1 for at least on warning, 2 for at least on error
 // - a multi-line string with the detailed results
 // - fixed version if can be auto-fixed
-function checkTokenInput(tokenInput, urlChecker, imgDimsCalc, fromBrowser) {
+function checkTokenInput(tokenInput, urlChecker, imgDimsCalc, fromBrowser, checkApiUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         let res = [];
         let fixed = null;
@@ -110,7 +110,7 @@ function checkTokenInput(tokenInput, urlChecker, imgDimsCalc, fromBrowser) {
         }
         // convert to tokenInfo, check that
         const tokenInfo = tokenInput.toTokenInfo();
-        const [resnumTI, resmsgTI] = yield tokenInfo_1.checkTokenInfo(tokenInfo, { checkUrl: tokenInfo_1.checkUrlWithFetch }, imgDimsCalc, true);
+        const [resnumTI, resmsgTI] = yield tokenInfo_1.checkTokenInfo(tokenInfo, { checkUrl: tokenInfo_1.checkUrlWithFetch }, imgDimsCalc, true, checkApiUrl);
         res.push({ res: resnumTI, msg: resmsgTI });
         const [resnum, resmsg] = tokenInfo_1.AggregateCheckResults(res);
         return [resnum, resmsg, fixed];

@@ -90,7 +90,7 @@ export class TokenInput {
 // - result: 0 for all OK, 1 for at least on warning, 2 for at least on error
 // - a multi-line string with the detailed results
 // - fixed version if can be auto-fixed
-export async function checkTokenInput(tokenInput: TokenInput, urlChecker: UrlChecker, imgDimsCalc: ImageDimensionsCalculator, fromBrowser: boolean): Promise<[number, string, TokenInput | null]> {
+export async function checkTokenInput(tokenInput: TokenInput, urlChecker: UrlChecker, imgDimsCalc: ImageDimensionsCalculator, fromBrowser: boolean, checkApiUrl: string): Promise<[number, string, TokenInput | null]> {
     let res: { res: number, msg: string }[] = [];
     let fixed: TokenInput | null = null;
 
@@ -107,7 +107,7 @@ export async function checkTokenInput(tokenInput: TokenInput, urlChecker: UrlChe
 
     // convert to tokenInfo, check that
     const tokenInfo = tokenInput.toTokenInfo();
-    const [resnumTI, resmsgTI] = await checkTokenInfo(tokenInfo, { checkUrl: checkUrlWithFetch }, imgDimsCalc, true);
+    const [resnumTI, resmsgTI] = await checkTokenInfo(tokenInfo, { checkUrl: checkUrlWithFetch }, imgDimsCalc, true, checkApiUrl);
     res.push({ res: resnumTI, msg: resmsgTI });
 
     const [resnum, resmsg] = AggregateCheckResults(res);

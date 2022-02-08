@@ -18,7 +18,7 @@ export declare class TokenInput {
     addLink(name: string, url: string): void;
     addLinkItem(item: LinkItem): void;
 }
-export declare function checkTokenInput(tokenInput: TokenInput, urlChecker: UrlChecker, imgDimsCalc: ImageDimensionsCalculator, fromBrowser: boolean): Promise<[number, string, TokenInput | null]>;
+export declare function checkTokenInput(tokenInput: TokenInput, urlChecker: UrlChecker, imgDimsCalc: ImageDimensionsCalculator, fromBrowser: boolean, checkApiUrl: string): Promise<[number, string, TokenInput | null]>;
 export declare function checkTokenInputContract(tokenInput: TokenInput): [number, string, string];
 export declare function checkTokenInputWebsite(tokenInput: TokenInput, urlChecker: UrlChecker): Promise<[number, string, string]>;
 export declare function checkTokenInputExplorer(tokenInput: TokenInput, urlChecker: UrlChecker): Promise<[number, string, string]>;

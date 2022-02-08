@@ -15,7 +15,20 @@ const testLogoUrls = [
     "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x86876a5fCAcb52a197f194A2c8b2166Af327a6da/logo.png",
     "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xD5525D397898e5502075Ea5E830d8914f6F0affe/logo.png"
 ];
-const assetsAPI = "https://api.assets.trustwallet.com"
+
+
+function getConfig(key) {
+    // Config is coming from script-index
+    return script.config[key];
+}
+
+function configApiAssetsUrl() {
+    return getConfig('api_assets_url');
+}
+
+function configApiTwUrl() {
+    return getConfig('api_tw_url');
+}
 
 function addLog(message) {
     console.log(message);
@@ -369,7 +382,7 @@ async function getPrFiles(userToken, prNum) {
 }
 
 async function checkUrlByBackend(url) {
-    const beUrl = `${assetsAPI}/v1/validate/url/status?url=${encodeURI(url)}`;
+    const beUrl = `${configApiAssetsUrl()}/v1/validate/url/status?url=${encodeURI(url)}`;
     console.log(`checkUrlByBackend ${beUrl}`);
     try {
         let resp = await fetch(beUrl);
@@ -393,7 +406,7 @@ async function checkUrlByBackend(url) {
 
 // throws
 async function retrieveTagValues() {
-    const resp = await fetch(`${assetsAPI}/v1/values/tags`);
+    const resp = await fetch(`${configApiAssetsUrl()}/v1/values/tags`);
     if (resp.status != 200) {
         throw `Could not retrieve, status ${resp.status}`;
     }
@@ -555,7 +568,8 @@ function start() {
                 addLog("starting TokenInfo check...");
                 let [resnum, resmsg] = await script.assets.checkTokenInfo(this.tokenInfo,
                     { checkUrl: checkUrlByBackend },
-                    { get: getImageDimension }, true);
+                    { get: getImageDimension }, true,
+                    `${configApiAssetsUrl()}/v1/validate/asset_info`);
                 if (resnum >= 2) {
                     myAlert("Check result: ERROR \n" + resmsg);
                 } else if (resnum >= 1) {
@@ -827,7 +841,7 @@ function start() {
                 this.tokens = [];
                 //const coinTypes = "60,195,714,20000714"; // eth, tron, binance, bep20; networks=${coinTypes}
                 //${this.includeUnverified ? '&include_unverified=true' : ''}
-                const url = `https://api.trustwallet.com/v1/search/assets?query=${this.queryString}&version=100&type=all`;
+                const url = `${configApiTwUrl()}/v1/search/assets?query=${this.queryString}&version=100&type=all`;
                 let resp = await fetch(url);
                 if (resp.status != 200) {
                     myAlert(`Error from ${url}, status ${resp.status} ${resp.statusText}`);
@@ -1090,7 +1104,8 @@ function start() {
                 this.checkButtonText = 'Checking ...';
                 addLog("starting TokenInput check...");
                 const [resnum, resmsg, fixed] = await script.assets.checkTokenInput(this.tokenInput,
-                    { checkUrl: checkUrlByBackend }, { get: getImageDimension }, true);
+                    { checkUrl: checkUrlByBackend }, { get: getImageDimension }, true,
+                    `${configApiAssetsUrl()}/v1/validate/asset_info`);
                 if (resnum == 0) {
                     myAlert("Check result: OK\n" + resmsg);
                     this.checkButtonText = '';
@@ -1718,7 +1733,7 @@ function start() {
             },
             */
             loginActionUrl: function () {
-                return `${assetsAPI}/v1/github/oauth`;
+                return `${configApiAssetsUrl()}/v1/github/oauth`;
             },
         }
     });

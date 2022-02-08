@@ -429,7 +429,7 @@ export function isInfoTagsValid(tags: string[]): [string, string] {
 // - result: 0 for all OK, 1 for at least one warning, 2 for at least one error
 // - a multi-line string with the detailed results
 export async function checkTokenInfo(tokenInfo: TokenInfo, urlChecker: UrlChecker,
-    imgDimsCalc: ImageDimensionsCalculator, fromBrowser: boolean): Promise<[number, string]> {
+    imgDimsCalc: ImageDimensionsCalculator, fromBrowser: boolean, checkApiUrl: string): Promise<[number, string]> {
     let res: { res: number, msg: string }[] = [];
 
     if (!tokenInfo.type || !normalizeType(tokenInfo.type)) {
@@ -443,8 +443,8 @@ export async function checkTokenInfo(tokenInfo: TokenInfo, urlChecker: UrlChecke
     if (!tokenInfo.info) {
         res.push({ res: 2, msg: "Info.json must not be missing" });
     } else {
-        if (fromBrowser) {
-            let resp = await httpPostFromBrowser(`${assetsAPI}/v1/validate/asset_info`, tokenInfo.info);
+        if (fromBrowser && checkApiUrl) {
+            let resp = await httpPostFromBrowser(checkApiUrl, tokenInfo.info);
             //console.log(resp);
             if (resp[1]['errors']) {
                 for (var k in resp[1]['errors']) {

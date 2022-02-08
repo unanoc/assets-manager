@@ -428,7 +428,7 @@ exports.isInfoTagsValid = isInfoTagsValid;
 // returns:
 // - result: 0 for all OK, 1 for at least one warning, 2 for at least one error
 // - a multi-line string with the detailed results
-function checkTokenInfo(tokenInfo, urlChecker, imgDimsCalc, fromBrowser) {
+function checkTokenInfo(tokenInfo, urlChecker, imgDimsCalc, fromBrowser, checkApiUrl) {
     return __awaiter(this, void 0, void 0, function* () {
         let res = [];
         if (!tokenInfo.type || !normalizeType(tokenInfo.type)) {
@@ -442,8 +442,8 @@ function checkTokenInfo(tokenInfo, urlChecker, imgDimsCalc, fromBrowser) {
             res.push({ res: 2, msg: "Info.json must not be missing" });
         }
         else {
-            if (fromBrowser) {
-                let resp = yield fetch_1.httpPostFromBrowser(`${assetsAPI}/v1/validate/asset_info`, tokenInfo.info);
+            if (fromBrowser && checkApiUrl) {
+                let resp = yield fetch_1.httpPostFromBrowser(checkApiUrl, tokenInfo.info);
                 //console.log(resp);
                 if (resp[1]['errors']) {
                     for (var k in resp[1]['errors']) {

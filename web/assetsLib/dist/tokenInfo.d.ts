@@ -69,7 +69,7 @@ export interface ImageDimensionsCalculator {
 }
 export declare function checkUrlWithFetch(targetUrl: string): Promise<number>;
 export declare function isInfoTagsValid(tags: string[]): [string, string];
-export declare function checkTokenInfo(tokenInfo: TokenInfo, urlChecker: UrlChecker, imgDimsCalc: ImageDimensionsCalculator, fromBrowser: boolean): Promise<[number, string]>;
+export declare function checkTokenInfo(tokenInfo: TokenInfo, urlChecker: UrlChecker, imgDimsCalc: ImageDimensionsCalculator, fromBrowser: boolean, checkApiUrl: string): Promise<[number, string]>;
 export declare function AggregateCheckResults(res: {
     res: number;
     msg: string;
