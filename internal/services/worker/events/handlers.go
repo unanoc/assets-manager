@@ -3,6 +3,7 @@ package events
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -11,10 +12,12 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	assetsmanager "github.com/trustwallet/assets-go-libs/client/assets-manager"
+	"github.com/trustwallet/assets-go-libs/file"
 	"github.com/trustwallet/assets-go-libs/http"
 	"github.com/trustwallet/assets-go-libs/image"
 	"github.com/trustwallet/assets-go-libs/path"
 	"github.com/trustwallet/assets-go-libs/validation"
+	"github.com/trustwallet/assets-go-libs/validation/list"
 	"github.com/trustwallet/assets-manager/internal/config"
 	"github.com/trustwallet/assets-manager/internal/services/worker/blockchain"
 	"github.com/trustwallet/assets-manager/internal/services/worker/github"
@@ -388,7 +391,16 @@ func (e Handler) HandlePullRequestChangesPushed(ctx context.Context, event *gh.P
 		return err
 	}
 
-	summary := e.getFilesCheckSummary(files, headOwner, headRepo, branch)
+	filesCheckSummary := e.getFilesCheckSummary(files, owner)
+	tokenCheckSummary := e.getTokensCheckSummary(files, headOwner, headRepo, branch)
+	validatorsCheckSummary := e.getValidatorsCheckSummary(files, headOwner, headRepo, branch)
+
+	summary := fmt.Sprintf("%s%s\n%s", filesCheckSummary, tokenCheckSummary, validatorsCheckSummary)
+	if tokenCheckSummary == "" && validatorsCheckSummary == "" {
+		summary = "No token files found. If you try to add/modify a token, " +
+			"check the name and location of your files! Logo file must be named exactly 'logo.png'. " +
+			"If you are not adding a token, ignore this message."
+	}
 
 	err = e.github.CreateCommentOnPullRequest(ctx, owner, repo, summary, pr.GetNumber())
 	if err != nil {
@@ -403,17 +415,19 @@ func (e Handler) HandlePullRequestChangesPushed(ctx context.Context, event *gh.P
 	return nil
 }
 
-// nolint: gosec
-func (e Handler) getFilesCheckSummary(files []*gh.CommitFile, repoOwner, repoName, branch string) string {
-	text := "**PR Summary**\n"
+func (e Handler) getFilesCheckSummary(files []*gh.CommitFile, repoOwner string) string {
+	text := "### PR Summary\n"
 
 	checkSummary := e.checkPullRequestFiles(files, config.Default.Limitation.PrFilesNumMax, repoOwner)
 	if checkSummary != "" {
 		return fmt.Sprintf("%s%s", text, checkSummary)
 	}
 
-	text += fmt.Sprintf("Files OK: %d\n", len(files))
+	return fmt.Sprintf("%sFiles OK: %d\n", text, len(files))
+}
 
+// nolint: gosec
+func (e Handler) getTokensCheckSummary(files []*gh.CommitFile, repoOwner, repoName, branch string) string {
 	// Check tokens.
 	tokenIDs := make(map[string]string)
 
@@ -426,10 +440,10 @@ func (e Handler) getFilesCheckSummary(files []*gh.CommitFile, repoOwner, repoNam
 	}
 
 	if len(tokenIDs) == 0 {
-		return fmt.Sprintf("%sNo token files found. If you try to add/modify a token, "+
-			"check the name and location of your files! Logo file must be named exactly 'logo.png'. "+
-			"If you are not adding a token, ignore this message.", text)
+		return ""
 	}
+
+	var text string
 
 	tokenHeaderTxt := "Token in PR: %s %s"
 	if len(tokenIDs) > 1 {
@@ -451,6 +465,82 @@ func (e Handler) getFilesCheckSummary(files []*gh.CommitFile, repoOwner, repoNam
 	}
 
 	return text
+}
+
+func (e Handler) getValidatorsCheckSummary(files []*gh.CommitFile, repoOwner, repoName, branch string) string {
+	validatorLists := make([]*file.Path, 0)
+	validatorAssetLogos := make([]*file.Path, 0)
+
+	for _, f := range files {
+		assetPath := file.NewPath(f.GetFilename())
+
+		if assetPath.Type() == file.TypeValidatorsListFile {
+			validatorLists = append(validatorLists, assetPath)
+		}
+
+		if assetPath.Type() == file.TypeValidatorsLogoFile {
+			validatorAssetLogos = append(validatorAssetLogos, assetPath)
+		}
+	}
+
+	text := "**Validators check**\n"
+	if (len(validatorAssetLogos) == 0 && len(validatorLists) > 0) ||
+		(len(validatorAssetLogos) > 0 && len(validatorLists) == 0) {
+		return fmt.Sprintf("%s❌ For adding asset validators, you need to add validator logo and update list.json", text)
+	}
+
+	if len(validatorAssetLogos) == 0 && len(validatorLists) == 0 {
+		return ""
+	}
+
+	errorsMsg := e.checkValidators(validatorLists, validatorAssetLogos, repoOwner, repoName, branch)
+	if errorsMsg != "" {
+		return fmt.Sprintf("%s%s", text, errorsMsg)
+	}
+
+	return text + "✅ Check OK"
+}
+
+func (e Handler) checkValidators(validatorLists, validatorAssetLogos []*file.Path,
+	repoOwner, repoName, branch string) string {
+	var errorsMsg string
+
+	for _, vlist := range validatorLists {
+		listURL := path.GetValidatorListGithubURL(repoOwner, repoName, branch, vlist.Chain().Handle)
+		bytes, err := http.GetHTTPResponseBytes(listURL)
+		if err != nil {
+			return fmt.Sprintf("Failed to get file content of [list.json](%s)", listURL)
+		}
+
+		var validatorList []list.Model
+		err = json.Unmarshal(bytes, &validatorList)
+		if err != nil {
+			return fmt.Sprintf("Failed to parse content of [list.json](%s)", listURL)
+		}
+
+		validatorMap := make(map[string]struct{})
+		for _, v := range validatorList {
+			validatorMap[*v.ID] = struct{}{}
+		}
+
+		for _, vlogo := range validatorAssetLogos {
+			if vlogo.Chain() != vlist.Chain() {
+				continue
+			}
+
+			if _, exists := validatorMap[vlogo.Asset()]; !exists {
+				errorsMsg += fmt.Sprintf("❌ Asset '%s' (%s) not found in [list.json](%s)\n",
+					vlogo.Asset(), vlogo.Chain().Handle, listURL)
+			}
+
+			logoURL := path.GetValidatorAssetLogoGithubURL(repoOwner, repoName, branch, vlogo.Chain().Handle, vlogo.Asset())
+			errorsMsg += fmt.Sprintf("%s\n\n%s", e.checkLogo(logoURL), getLogoHTML(logoURL))
+
+			errorsMsg += "\n-----\n"
+		}
+	}
+
+	return errorsMsg
 }
 
 func (e Handler) checkPullRequestFiles(files []*gh.CommitFile, limit int, repoOwner string) string {
@@ -536,7 +626,7 @@ func (e Handler) checkToken(tokenID, tokenType, repoOwner, repoName, branch stri
 
 	msg += e.checkAssetInfo(tokenInfo)
 	if msg == "" {
-		text += "\nCheck OK 🙂"
+		text += "\n✅ Check OK"
 	} else {
 		text += fmt.Sprintf("\nToken check error: \n%s\n", msg)
 	}
