@@ -3,7 +3,6 @@ package github
 import (
 	"context"
 	"net/http"
-	"time"
 
 	ghi "github.com/bradleyfalzon/ghinstallation"
 	"github.com/google/go-github/v38/github"
@@ -195,18 +194,6 @@ func (c *Client) GetPullRequestFileList(ctx context.Context, owner, repo string,
 		PerPage: perpage,
 	})
 	if err != nil {
-		// TODO: Add a good retry logic. It's made to watch if it solves the problem.
-		for i := 0; i < 3; i++ {
-			time.Sleep(1 * time.Second)
-
-			list, _, err = c.client.PullRequests.ListFiles(ctx, owner, repo, prNum, &github.ListOptions{
-				PerPage: perpage,
-			})
-			if err == nil {
-				return list, nil
-			}
-		}
-
 		return nil, errors.Wrap(err, "failed to get pull request file list")
 	}
 

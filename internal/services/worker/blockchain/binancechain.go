@@ -2,7 +2,6 @@ package blockchain
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/binance-chain/go-sdk/client"
 	"github.com/binance-chain/go-sdk/common/types"
@@ -63,18 +62,7 @@ func (c *Client) GetTransactionsForAddress(address string) ([]api.Tx, error) {
 	var txs []api.Tx
 	var err error
 
-	txs, err = c.customClient.GetTransactionsByAddress(address, 50)
-	if err != nil {
-		// TODO: Add a good retry logic. It's made to watch if it solves the problem.
-		for i := 0; i < 3; i++ {
-			time.Sleep(1 * time.Second)
-
-			txs, err = c.customClient.GetTransactionsByAddress(address, 50)
-			if err == nil {
-				return txs, nil
-			}
-		}
-
+	if txs, err = c.customClient.GetTransactionsByAddress(address, 50); err != nil {
 		return nil, errors.Wrap(err, "failed to fetch transactions by address")
 	}
 
