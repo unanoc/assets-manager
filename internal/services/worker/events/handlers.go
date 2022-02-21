@@ -445,10 +445,10 @@ func (e Handler) getTokensCheckSummary(files []*gh.CommitFile, repoOwner, repoNa
 
 	var text string
 
-	tokenHeaderTxt := "Token in PR: %s %s"
+	tokenHeaderTxt := "Token in PR: **%s** %s"
 	if len(tokenIDs) > 1 {
 		text += fmt.Sprintf("Tokens in PR: (%d)\n", len(tokenIDs))
-		tokenHeaderTxt = "\n- %s %s"
+		tokenHeaderTxt = "\n- **%s** %s"
 	}
 
 	for id, tokenType := range tokenIDs {
