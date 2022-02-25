@@ -1,4 +1,4 @@
-package worker
+package consumer
 
 import (
 	"context"
@@ -14,10 +14,10 @@ import (
 	"github.com/trustwallet/assets-manager/internal/config"
 	"github.com/trustwallet/assets-manager/internal/queue"
 	"github.com/trustwallet/assets-manager/internal/services"
-	"github.com/trustwallet/assets-manager/internal/services/worker/blockchain"
-	"github.com/trustwallet/assets-manager/internal/services/worker/events"
-	"github.com/trustwallet/assets-manager/internal/services/worker/github"
-	"github.com/trustwallet/assets-manager/internal/services/worker/metrics"
+	"github.com/trustwallet/assets-manager/internal/services/consumer/blockchain"
+	"github.com/trustwallet/assets-manager/internal/services/consumer/events"
+	"github.com/trustwallet/assets-manager/internal/services/consumer/github"
+	"github.com/trustwallet/assets-manager/internal/services/consumer/metrics"
 	metricsLib "github.com/trustwallet/go-libs/metrics"
 	"github.com/trustwallet/go-libs/mq"
 	"github.com/trustwallet/go-libs/worker"

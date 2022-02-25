@@ -5,7 +5,7 @@
 The repository contains a several subprojects:
 
 - `API` - RESTful API for managing/validating assets.
-- `Worker` - Github Bot for Pull Requests to Trust Wallet Assets repository. It receives Github events from MQ and does appropriate logic.
+- `Consumer` - Github Bot for Pull Requests to Trust Wallet Assets repository. It receives Github events from MQ and does appropriate logic.
 - `Web` - Web application to help adding new tokens and managing the Trust Wallet assets repository.
 
 ## Local development
@@ -24,9 +24,9 @@ Run
 make go-build start-api
 ```
 
-### Worker Service
+### Consumer Service
 
-Developing and testing Worker service is a bit tricky. Here is a guide on how you can do this.
+Developing and testing Consumer service is a bit tricky. Here is a guide on how you can do this.
 
 **Webhook deliveries**
 
@@ -41,7 +41,7 @@ Use CLI
 npm install --global smee-client
 ```
 
-Once you installed SMEE, create a channel on [website](https://smee.io/) and use a channel's link to launch this in a separate terminal window. 
+Once you installed SMEE, create a channel on [website](https://smee.io/) and use a channel's link to launch this in a separate terminal window.
 
 For example:
 
@@ -64,5 +64,5 @@ After all, you will need to copy your `App ID` and generate/download a private k
 Run
 
 ``` sh
-GITHUB_APP_PRIVATE_KEY=`cat github-private-key.pem` GITHUB_APP_ID=167859 make go-build start-worker
+GITHUB_APP_PRIVATE_KEY=`cat github-private-key.pem` GITHUB_APP_ID=167859 make go-build start-consumer
 ```

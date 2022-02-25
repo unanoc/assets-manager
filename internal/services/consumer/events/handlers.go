@@ -19,9 +19,9 @@ import (
 	"github.com/trustwallet/assets-go-libs/validation"
 	"github.com/trustwallet/assets-go-libs/validation/list"
 	"github.com/trustwallet/assets-manager/internal/config"
-	"github.com/trustwallet/assets-manager/internal/services/worker/blockchain"
-	"github.com/trustwallet/assets-manager/internal/services/worker/github"
-	"github.com/trustwallet/assets-manager/internal/services/worker/metrics"
+	"github.com/trustwallet/assets-manager/internal/services/consumer/blockchain"
+	"github.com/trustwallet/assets-manager/internal/services/consumer/github"
+	"github.com/trustwallet/assets-manager/internal/services/consumer/metrics"
 	"github.com/trustwallet/go-primitives/coin"
 	"github.com/trustwallet/go-primitives/types"
 )
