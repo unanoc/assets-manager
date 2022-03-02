@@ -20,8 +20,10 @@ func (i *Controller) ValidateAssetInfo(asset AssetInfoRequest) *AssetInfoRespons
 
 	assetModel := mapAssetModel(asset)
 
-	// nolint: errcheck // not stable
-	externalTokenInfo, _ := external.GetTokenInfo(asset.ID, asset.Type)
+	externalTokenInfo, err := external.GetTokenInfo(asset.ID, asset.Type)
+	if err != nil {
+		log.WithError(err).Debugf("Failed to get token info")
+	}
 
 	checks := []func() error{
 		func() error { return validateAssetInfoID(asset.ID, asset.Type) },
