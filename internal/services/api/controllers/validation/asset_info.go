@@ -161,10 +161,6 @@ func validateAssetInfoExplorer(explorer, tokenID, tokenType string) error {
 }
 
 func validateAssetInfoLinks(links []Link) error {
-	if len(links) == 0 {
-		return fmt.Errorf("links field cannot be be empty")
-	}
-
 	linksMinRequired := config.Default.Validation.Asset.LinksMinRequired
 
 	if len(links) < linksMinRequired {
