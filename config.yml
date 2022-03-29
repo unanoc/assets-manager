@@ -19,7 +19,9 @@ consumer:
 
 metrics:
   path: metrics
-  pushgateway_url: http://localhost:9091
+  pushgateway:
+    url: http://localhost:9091
+    key: # X-API-Key
   push_interval: 30s
 
 clients:

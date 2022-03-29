@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/trustwallet/go-libs/client"
 	"github.com/trustwallet/go-libs/metrics"
 	"github.com/trustwallet/go-libs/worker"
 )
 
-func InitMetricsPusher(pushgatewayURL string, pushInterval time.Duration) (worker.Worker, error) {
-	pusher := metrics.NewPusher(pushgatewayURL, "assets_manager_worker")
+func InitMetricsPusher(pushgatewayURL, pushgatewayKey string, pushInterval time.Duration) (worker.Worker, error) {
+	client := client.InitClient(pushgatewayURL, nil)
+	client.AddHeader("X-API-Key", pushgatewayKey)
+
+	pusher := metrics.NewPusherWithCustomClient(pushgatewayURL, "assets_manager_consumer", client.HttpClient)
 
 	// Check connection to pusher.
 	err := pusher.Push()

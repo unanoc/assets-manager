@@ -30,9 +30,12 @@ type Configuration struct {
 	} `mapstructure:"consumer"`
 
 	Metrics struct {
-		Path           string        `mapstructure:"path"`
-		PushGatewayURL string        `mapstructure:"pushgateway_url"`
-		PushInterval   time.Duration `mapstructure:"push_interval"`
+		Path        string `mapstructure:"path"`
+		PushGateway struct {
+			URL string `mapstructure:"url"`
+			Key string `mapstructure:"key"`
+		} `mapstructure:"pushgateway"`
+		PushInterval time.Duration `mapstructure:"push_interval"`
 	} `mapstructure:"metrics"`
 
 	Clients struct {

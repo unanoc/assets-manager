@@ -42,7 +42,9 @@ func NewApp() *App {
 		log.WithError(err).Fatal("failed to init RabbitMQ")
 	}
 
-	metricsPusher, err := metrics.InitMetricsPusher(config.Default.Metrics.PushGatewayURL,
+	metricsPusher, err := metrics.InitMetricsPusher(
+		config.Default.Metrics.PushGateway.URL,
+		config.Default.Metrics.PushGateway.Key,
 		config.Default.Metrics.PushInterval)
 	if err != nil {
 		log.WithError(err).Error("failed to init metrics pusher")

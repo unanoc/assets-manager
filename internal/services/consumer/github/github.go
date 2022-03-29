@@ -114,8 +114,9 @@ func (c *Client) GetPullRequest(ctx context.Context, owner, repo string, prNum i
 }
 
 // GetPullRequestReviewList returns pull request reviews by number.
-func (c *Client) GetPullRequestReviewList(ctx context.Context, owner, repo string,
-	prNum int) ([]*github.PullRequestReview, error) {
+func (c *Client) GetPullRequestReviewList(
+	ctx context.Context, owner, repo string, prNum int,
+) ([]*github.PullRequestReview, error) {
 	list, _, err := c.client.PullRequests.ListReviews(ctx, owner, repo, prNum, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get reviews list")
@@ -135,8 +136,9 @@ func (c *Client) GetIssueListLabels(ctx context.Context, owner, repo string, prN
 }
 
 // CreateReview creates a review on pull request.
-func (c *Client) CreateReview(ctx context.Context, owner, repo, body, event string,
-	prNum int) (*github.PullRequestReview, error) {
+func (c *Client) CreateReview(
+	ctx context.Context, owner, repo, body, event string, prNum int,
+) (*github.PullRequestReview, error) {
 	prReview, _, err := c.client.PullRequests.CreateReview(ctx, owner, repo, prNum,
 		&github.PullRequestReviewRequest{
 			Body:  &body,
@@ -150,8 +152,9 @@ func (c *Client) CreateReview(ctx context.Context, owner, repo, body, event stri
 }
 
 // AddAssignees adds assignees to issue/pull request.
-func (c *Client) AddAssignees(ctx context.Context, owner, repo string,
-	prNum int, assignees []string) (*github.Issue, error) {
+func (c *Client) AddAssignees(
+	ctx context.Context, owner, repo string, prNum int, assignees []string,
+) (*github.Issue, error) {
 	issue, _, err := c.client.Issues.AddAssignees(ctx, owner, repo, prNum, assignees)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to add assignees")

@@ -14,8 +14,8 @@ require (
 	github.com/prometheus/client_golang v1.12.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/trustwallet/assets-go-libs v0.1.3
-	github.com/trustwallet/go-libs v0.3.6
-	github.com/trustwallet/go-primitives v0.0.34
+	github.com/trustwallet/go-libs v0.3.9
+	github.com/trustwallet/go-primitives v0.0.36
 )
 
 require (
