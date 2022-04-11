@@ -47,7 +47,7 @@ github:
 
 payment:
   options:
-    - amount: 1000
+    - amount: 700
       symbol: "TWT"
       token: "TWT-8C2"
     - amount: 5
