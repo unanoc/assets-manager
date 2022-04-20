@@ -33,8 +33,12 @@ type Handler struct {
 	assetsManager *assetsmanager.Client
 }
 
-func NewHandler(metricsClient *metrics.Prometheus, githubClient *github.Client,
-	blockchainClient *blockchain.Client, assetsManager *assetsmanager.Client) *Handler {
+func NewHandler(
+	metricsClient *metrics.Prometheus,
+	githubClient *github.Client,
+	blockchainClient *blockchain.Client,
+	assetsManager *assetsmanager.Client,
+) *Handler {
 	return &Handler{
 		metrics:       metricsClient,
 		github:        githubClient,
@@ -501,8 +505,9 @@ func (e Handler) getValidatorsCheckSummary(files []*gh.CommitFile, repoOwner, re
 	return text + "✅ Check OK"
 }
 
-func (e Handler) checkValidators(validatorLists, validatorAssetLogos []*file.Path,
-	repoOwner, repoName, branch string) string {
+func (e Handler) checkValidators(
+	validatorLists, validatorAssetLogos []*file.Path, repoOwner, repoName, branch string,
+) string {
 	var errorsMsg string
 
 	for _, vlist := range validatorLists {

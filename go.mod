@@ -9,16 +9,17 @@ require (
 	github.com/binance-chain/go-sdk v1.2.6
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/google/go-github/v38 v38.1.0
-	github.com/penglongli/gin-metrics v0.1.9
+	github.com/penglongli/gin-metrics v0.1.10
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.12.0
+	github.com/prometheus/client_golang v1.12.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/trustwallet/assets-go-libs v0.1.3
-	github.com/trustwallet/go-libs v0.3.10
-	github.com/trustwallet/go-primitives v0.0.36
+	github.com/trustwallet/go-libs v0.3.13
+	github.com/trustwallet/go-primitives v0.0.39
 )
 
 require (
+	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/certifi/gocertifi v0.0.0-20210507211836-431795d63e8d // indirect
 	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/evalphobia/logrus_sentry v0.8.2 // indirect
@@ -38,9 +39,9 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
+	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/streadway/amqp v1.0.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
-	github.com/willf/bitset v1.1.11 // indirect
 	github.com/zondax/hid v0.9.0 // indirect
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
 )
@@ -89,8 +90,8 @@ require (
 	github.com/tendermint/tendermint v0.32.3 // indirect
 	github.com/tendermint/tm-db v0.1.1 // indirect
 	github.com/zondax/ledger-go v0.9.0 // indirect
-	golang.org/x/crypto v0.0.0-20211209193657-4570a0811e8b // indirect
-	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
+	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
+	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa // indirect

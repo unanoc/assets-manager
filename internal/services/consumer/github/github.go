@@ -191,8 +191,12 @@ func (c *Client) GetPullRequestsList(
 }
 
 // GetPullRequestFileList receives a pull request file list.
-func (c *Client) GetPullRequestFileList(ctx context.Context, owner, repo string, prNum int,
-	perpage int) ([]*github.CommitFile, error) {
+func (c *Client) GetPullRequestFileList(
+	ctx context.Context,
+	owner, repo string,
+	prNum int,
+	perpage int,
+) ([]*github.CommitFile, error) {
 	list, _, err := c.client.PullRequests.ListFiles(ctx, owner, repo, prNum, &github.ListOptions{
 		PerPage: perpage,
 	})

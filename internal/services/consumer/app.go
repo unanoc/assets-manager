@@ -91,12 +91,13 @@ func runBackgroundChecker(ctx context.Context, wg *sync.WaitGroup, eh *events.Ha
 	repoOwner := config.Default.Github.RepoOwner
 	repoName := config.Default.Github.RepoName
 
-	workerOpts := worker.DefaultWorkerOptions(config.Default.Timeout.BackgroundCheck)
-	workerFn := func() error {
+	w := worker.NewWorkerBuilder("pr_checker", func() error {
 		return eh.CheckOpenPullRequests(ctx, repoOwner, repoName, nil)
-	}
+	}).
+		WithOptions(worker.DefaultWorkerOptions(config.Default.Timeout.BackgroundCheck)).
+		Build()
 
-	worker.InitWorker("PR checker", workerOpts, workerFn).Start(ctx, wg)
+	w.Start(ctx, wg)
 }
 
 func initConsumers(ctx context.Context, mqClient *mq.Client, eh *events.Handler) []mq.Consumer {
