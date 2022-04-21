@@ -1,6 +1,6 @@
 module github.com/trustwallet/assets-manager
 
-go 1.17
+go 1.18
 
 // +heroku goVersion go1.17
 // +heroku install ./cmd/...
@@ -13,7 +13,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.12.1
 	github.com/sirupsen/logrus v1.8.1
-	github.com/trustwallet/assets-go-libs v0.1.3
+	github.com/trustwallet/assets-go-libs v0.1.4
 	github.com/trustwallet/go-libs v0.3.13
 	github.com/trustwallet/go-primitives v0.0.39
 )
@@ -39,7 +39,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
-	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/streadway/amqp v1.0.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	github.com/zondax/hid v0.9.0 // indirect

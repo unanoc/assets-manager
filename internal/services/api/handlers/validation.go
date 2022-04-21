@@ -41,7 +41,7 @@ func (api *ValidationAPI) ValidateAssetInfo(c *gin.Context) {
 func (api *ValidationAPI) CheckURLStatus(c *gin.Context) {
 	url, ok := c.GetQuery("url")
 	if !ok {
-		log.Error(fmt.Errorf("url not found"))
+		log.Debug(fmt.Errorf("url not found"))
 		abortWithStatusJSON(c, http.StatusBadRequest)
 
 		return
