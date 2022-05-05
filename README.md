@@ -66,3 +66,48 @@ Run
 ``` sh
 GITHUB_APP_PRIVATE_KEY=`cat github-private-key.pem` GITHUB_APP_ID=167859 make go-build start-consumer
 ```
+
+**The most common cases from moderators**
+
+A lot of of things for assets management you can control via [config](https://github.com/trustwallet/assets-manager/blob/main/config.yml).
+For example:
+
+- adding moderator to the list if moderators to turn off fee requirement for them
+- updating fee amount
+- updating holders amount
+- validation requirements and etc
+
+***Supporting new token type***
+
+go-primitives
+
+1. Define this token type in [constants](https://github.com/trustwallet/go-primitives/blob/master/types/token.go)
+
+2. Add this token type to the func [GetTokenType](https://github.com/trustwallet/go-primitives/blob/master/types/token.go) + case in unit test
+
+3. Add this token type to the func [GetTokenTypes](https://github.com/trustwallet/go-primitives/blob/master/types/token.go)
+
+4. Add explorer link for this token to the func [GetCoinExploreURL](https://github.com/trustwallet/go-primitives/blob/da50809e2a612d4a32cb0824f21653da3661801e/coin/models.go) + case in unit test
+
+5. Add this token type to the func [GetChainFromAssetType](https://github.com/trustwallet/go-primitives/blob/master/types/chain.go)
+
+6. After merging to the master, create a tag of package version and make `go get github.com/trustwallet/go-primitives@YOUR_VERSION` in [assets-go-libs](https://github.com/trustwallet/assets-go-libs), [assets-manager](https://github.com/trustwallet/assets-manager) and [assets](https://github.com/trustwallet/assets)
+
+***Increasing or decreasing the fee for PRs***
+
+Sometimes, due to activity of users and huge amount of open PR-s, moderators suggest to increase the amount of required fee.
+Example of PR: https://github.com/trustwallet/assets/pull/20021#issuecomment-1107364308
+
+In order to change this amount you either need to update this value on Heroku in ENVs or change it in [config](https://github.com/trustwallet/assets-manager/blob/main/config.yml#L50)
+
+***Adding new tags***
+
+All tags are placed in [config](https://github.com/trustwallet/assets-manager/blob/61ce41b86f925397aecfae046c0ea0c3f6150648/config.yml#L117). Just update it.
+
+***Removing tokens***
+
+All tokens can not be removed from assets repository.
+Moderators have to change `status` field from `active` to `abandoned`. The bot warns about it but if they merge a PR with removed `info.json` files - then backend worker can be broken. To fix it - you need to revert changes and then mark these tokens as `abandoned`.
+
+
+
