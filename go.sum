@@ -401,6 +401,8 @@ github.com/trustwallet/go-primitives v0.0.43 h1:JiOg+onp53nqg23tzlSKZ2Ntx7QFjZ0W
 github.com/trustwallet/go-primitives v0.0.43/go.mod h1:4IujMVfxa0uJS267wFszPDYd7vVjQY+/uOREZclnfU0=
 github.com/trustwallet/go-primitives v0.0.44 h1:PEa3MxsP117hypr9iLr+VrKkEubArTOiJVYTPhLc6Vo=
 github.com/trustwallet/go-primitives v0.0.44/go.mod h1:4IujMVfxa0uJS267wFszPDYd7vVjQY+/uOREZclnfU0=
+github.com/trustwallet/go-primitives v0.0.45 h1:SFeAUgFc4slZGA26pcEGGaCKrqHvmZa5CFvSjbmv4KM=
+github.com/trustwallet/go-primitives v0.0.45/go.mod h1:4IujMVfxa0uJS267wFszPDYd7vVjQY+/uOREZclnfU0=
 github.com/ugorji/go v1.1.7/go.mod h1:kZn38zHttfInRq0xu/PH0az30d+z6vm202qpg1oXVMw=
 github.com/ugorji/go/codec v1.1.7 h1:2SvQaVZ1ouYrrKKwoSk2pzd4A9evlKJb9oTL+OaLUSs=
 github.com/ugorji/go/codec v1.1.7/go.mod h1:Ax+UKWsSmolVDwsd+7N3ZtXu+yMGCf907BLYF3GoBXY=
