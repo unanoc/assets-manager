@@ -18,3 +18,7 @@
 bin/
 coverage.txt
 github-private-key.pem
+/.idea/.gitignore
+/.idea/assets-manager.iml
+/.idea/modules.xml
+/.idea/vcs.xml
